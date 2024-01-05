@@ -1,22 +1,28 @@
 {% extends "layout.html" %}
 {% block content %}
-    <main>
+    <div class="container-fluid mx-auto text-center">
         <!-- Landing section -->
-        <div> 
-            <h1>Culinary Compass</h1>
-            <h3>Don't know where to eat? We've got you convered.</h3>
+        <div class="container-fluid home-section" id="landing"> 
+            <div>
+                <h1>Culinary Compass</h1>
+                <h3>Don't know where to eat? We've got you convered.</h3>
+            </div> 
         </div>
 
         <!-- About section -->
-        <div> 
+        <div class="container-fluid home-section" id="about"> 
+            <div>
             <h1>Our Story</h1>
             <h3>Insert story here</h3>
+            </div>
         </div>
 
         <!-- Tutorial section -->
-        <div> 
+        <div class="container-fluid home-section" id="tutorial"> 
+            <div>
             <h1>Get Started</h1>
             <h3>Create an account, etc... </h3>
-        </div>
-    </main>
+            </div>
+        </div>   
+    </div>
 {% endblock content %}

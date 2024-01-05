@@ -1,27 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100;0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;0,9..40,1000;1,9..40,100;1,9..40,200;1,9..40,300;1,9..40,400;1,9..40,500;1,9..40,600;1,9..40,700;1,9..40,800;1,9..40,900;1,9..40,1000&display=swap');
+
+/* General styles */
 body {
     background: #fafafa;
+    font-family: 'DM Sans', sans-serif;
     color: #333333;
-    margin-top: 5rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #444444;
+    padding: 0;
+    margin: 0;
+    color: #ffffff;
 }
 
 ul {
     margin: 0;
 }
 
+#main {
+    /* Padding for the navbar */
+    padding-top: 61px;
+}
+
+/* Navigation bar styles */
 .bg-steel {
-    background-color: #5f788a;
+    background-color: #e85d04;
 }
 
 .site-header .navbar-nav .nav-link {
-    color: #cbd5db;
+    color: #ffffff;
 }
 
 .site-header .navbar-nav .nav-link:hover {
-    color: #ffffff;
+    color: #cbd5db;
 }
 
 .site-header .navbar-nav .nav-link.active {
@@ -36,6 +47,57 @@ ul {
     margin-bottom: 20px;
 }
 
+/* Account images */
+.account-img {
+    height: 125px;
+    width: 125px;
+    margin-right: 20px;
+    margin-bottom: 16px;
+    object-fit:cover;
+}
+
+.nav-account-image {
+    height: 30px;
+    width: 30px;
+    margin-left: 5px;
+    object-fit:cover;
+}
+
+.account-heading {
+    color: #444444;
+    font-size: 2.5rem;
+}
+
+
+/* Specifc */
+.container-fluid {
+    padding: 0;
+}
+
+#landing {
+    background-color: #FAA307;
+    color: #444444;
+    height: 90vh;
+}
+
+#about {
+    background-color: #F48C06;
+    height: 90vh;
+}
+
+#tutorial {
+    background-color: #FAA307;
+    height: 90vh;
+}
+
+
+
+
+
+
+
+
+/* Nonce */
 .article-title {
     color: #444444;
 }
@@ -70,15 +132,4 @@ a.article-title:hover {
     width: 25px;
     height: 25px;
     vertical-align: middle;
-}
-
-.account-img {
-    height: 125px;
-    width: 125px;
-    margin-right: 20px;
-    margin-bottom: 16px;
-}
-
-.account-heading {
-    font-size: 2.5rem;
 }

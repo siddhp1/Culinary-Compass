@@ -1,8 +1,72 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="col-md-12 mx-auto text-center">
+<div class="col-md-8 mx-auto text-center">
     <h1>My Restaurants</h1>
     <h4>Visited a restaurant recently?</h4>
     <a href="{{ url_for('add') }}" class="btn btn-secondary">Add Restaurant</a>
+
+    <form class="form-inline mb-3" method="GET" action="{{ url_for('my') }}">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="Search for restaurants" value="{{ search_query }}">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-secondary">Search</button>
+                {% if search_query %}
+                    <a href="{{ url_for('my') }}" class="btn btn-outline-secondary">Clear</a>
+                    <h5 class="mb-3">Searching for restaurants with keywords: {{ search_query }} ({{ restaurants.total }})</h3>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    {% for restaurant in restaurants.items %}
+    <div class="card mt-3">
+        <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+            <h1 class="card-title"><a href="#">{{ restaurant.name }}</a></h1>
+            </div>
+            <div class="col-md-6">
+            <p class="text-muted">{{ restaurant.date_visited.strftime('%Y-%m-%d') }}</p>
+            <p><strong>Location:</strong> {{ restaurant.address }}</p>
+            <p><strong>Rating:</strong> {{ restaurant.rating }}</p>
+            </div>
+            <button type="button" class="btn btn-info btn-sm m-1" data-toggle="modal" data-target="#infoModal">More</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal{{ restaurant.id }}" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">{{ restaurant.name }} Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted"><strong>Date Visited:</strong> {{ restaurant.date_visited.strftime('%Y-%m-%d') }}</p>
+                    <p><strong>Location:</strong> {{ restaurant.address }}</p>
+                    <p><strong>Rating:</strong> {{ restaurant.rating }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for page_num in restaurants.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+      {% if page_num %}
+        {% if restaurants.page == page_num %}
+          <a class="btn btn-info mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
+        {% else %}
+          <a class="btn btn-outline-info mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
 </div>
 {% endblock content %}

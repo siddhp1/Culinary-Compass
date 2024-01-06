@@ -38,7 +38,7 @@ class Restaurant(db.Model):
     address = db.Column(db.String(100), nullable=False)
     date_visited = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     rating = db.Column(db.Integer, nullable=False)
-    keywords = db.Column(db.Text, nullable=False)
+    keywords = db.Column(db.Text, nullable=False, default='Test')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):

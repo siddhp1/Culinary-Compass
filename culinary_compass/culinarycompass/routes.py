@@ -1,7 +1,8 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, session
+from sqlalchemy import or_
 from culinarycompass import app, db, bcrypt, mail
 from culinarycompass.forms import (RegistrationForm,
                                    LoginForm,
@@ -13,6 +14,7 @@ from culinarycompass.forms import (RegistrationForm,
 from culinarycompass.models import User, Restaurant
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from culinarycompass.mapstest import Maps
     
 # Home page
 @app.route("/")
@@ -145,6 +147,10 @@ def add():
         # After, access the helper class for making maps API requests
         # this will determine the conditonal
         
+        # don't know if i need this for later, but it is to keep the data in a cookie
+        session['name'] = search_form.name.data
+        session['location'] = search_form.location.data
+        
         if temp == 1:
             flash('Searching for restaurant', 'success')
             return render_template('add_restaurant.html', search_form=search_form, submit_form=submit_form, submit_form_visible=True)
@@ -153,10 +159,23 @@ def add():
             return(redirect(url_for('add')))
     
     if submit_form.validate_on_submit():
+        # Just for testing
         flash('Submitting restaurant', 'success')
-        # Add to database here
         
-
+        name = session['name']
+        location = session['location']
+        date = submit_form.date.data
+        rating = submit_form.rating.data
+        
+        print(type(location))
+        print(type(rating))
+        
+        # Add to database here
+        restaurant = Restaurant(name = name, address = location, date_visited = date, rating=rating, user_id = current_user.id)
+        db.session.add(restaurant)
+        db.session.commit()
+        
+        #flash('Restaurant has been added', 'success')
         return(redirect(url_for('my'))) # Redirect to the my restaurant page to see restaurant history
     
     return(render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, submit_form=submit_form, submit_form_visible=False))
@@ -165,9 +184,25 @@ def add():
 @app.route("/my")
 @login_required
 def my():
-    # add pagination and rendering for the restaurants in database here
-    # use modal to expand restaurant information rather than another page
-    return(render_template('my_restaurants.html', title='My Restaurants'))
+    # Get the current page
+    page = request.args.get('page', default=1, type=int)
+    # Get search query from the user
+    search_query = request.args.get('q', '').strip()
+    
+    # Build the database query to filter by user and search query
+    base_query = Restaurant.query.filter_by(user_id=current_user.id)
+    if search_query:
+        search_filter = or_(
+            # Currently searching for keywords in name and address
+            # WILL EXPAND TO KEYWORDS LIKE GLUTEN FREE AND CUSINES
+            Restaurant.name.ilike(f"%{search_query}%"),
+            Restaurant.address.ilike(f"%{search_query}%")
+        )
+        restaurants = base_query.filter(search_filter).order_by(Restaurant.date_visited.desc()).paginate(page=page, per_page=3)
+    else:
+        restaurants = base_query.order_by(Restaurant.date_visited.desc()).paginate(page=page, per_page=3)
+
+    return(render_template('my_restaurants.html', title='My Restaurants', restaurants=restaurants, search_query=search_query))
 
 # Find restaurants page
 @app.route("/find")

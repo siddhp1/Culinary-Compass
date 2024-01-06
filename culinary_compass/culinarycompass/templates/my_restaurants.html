@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="col-md-12 mx-auto text-center">
-    <h1>My Restaurants</h1>         
+    <h1>My Restaurants</h1>
+    <h4>Visited a restaurant recently?</h4>
+    <a href="{{ url_for('add') }}" class="btn btn-secondary">Add Restaurant</a>
 </div>
 {% endblock content %}

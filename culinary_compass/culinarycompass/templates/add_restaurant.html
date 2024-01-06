@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="col-md-6 mx-auto">
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ search_form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Search restaurant</legend>
+                <div class="form-group">
+                    {{ search_form.name.label(class="form-control-label") }}
+                    {% if search_form.name.errors %}
+                        {{ search_form.name(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in search_form.name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ search_form.name(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ search_form.location.label(class="form-control-label") }}
+                    {% if search_form.location.errors %}
+                        {{ search_form.location(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in search_form.location.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ search_form.location(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ search_form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>  
+    {% if submit_form_visible %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ submit_form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Add restaurant</legend>
+                <div class="form-group">
+                    {{ submit_form.date.label(class="form-control-label") }}
+                    {% if submit_form.date.errors %}
+                        {{ submit_form.date(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in submit_form.date.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ submit_form.date(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ submit_form.rating.label(class="form-control-label") }}
+                    {% if submit_form.rating.errors %}
+                        {{ submit_form.rating(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in submit_form.rating.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ submit_form.rating(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ submit_form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

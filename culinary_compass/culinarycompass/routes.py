@@ -7,7 +7,9 @@ from culinarycompass.forms import (RegistrationForm,
                                    LoginForm,
                                    UpdateAccountForm,
                                    RequestResetForm,
-                                   ResetPasswordForm)
+                                   ResetPasswordForm,
+                                   SearchRestaurantForm,
+                                   SubmitRestaurantForm)
 from culinarycompass.models import User, Restaurant
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -17,18 +19,6 @@ from flask_mail import Message
 @app.route("/home")
 def home():
     return(render_template('home.html', title='Home'))
-
-# My restaurants page
-@app.route("/my")
-@login_required
-def my():
-    return(render_template('my_restaurants.html', title='My Restaurants'))
-
-# Find restaurants page
-@app.route("/find")
-@login_required
-def find():
-    return(render_template('find_restaurants.html', title='Find Restaurants'))
 
 # Register page
 @app.route("/register", methods=['GET', 'POST'])
@@ -141,3 +131,46 @@ def reset_token(token):
         flash('Your password has been updated. You are now able to log in.', 'success')
         return(redirect(url_for('login')))
     return(render_template('reset_token.html', title='Reset Password', form=form))
+
+# Add restaurant page
+@app.route("/add", methods=['GET', 'POST'])
+@login_required
+def add():
+    search_form = SearchRestaurantForm()
+    submit_form = SubmitRestaurantForm()
+    
+    if search_form.validate_on_submit():
+        # Temporary check for testing
+        temp = 1
+        # After, access the helper class for making maps API requests
+        # this will determine the conditonal
+        
+        if temp == 1:
+            flash('Searching for restaurant', 'success')
+            return render_template('add_restaurant.html', search_form=search_form, submit_form=submit_form, submit_form_visible=True)
+        else:
+            flash('Restaurant not found.', 'danger')
+            return(redirect(url_for('add')))
+    
+    if submit_form.validate_on_submit():
+        flash('Submitting restaurant', 'success')
+        # Add to database here
+        
+
+        return(redirect(url_for('my'))) # Redirect to the my restaurant page to see restaurant history
+    
+    return(render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, submit_form=submit_form, submit_form_visible=False))
+
+# My restaurants page
+@app.route("/my")
+@login_required
+def my():
+    # add pagination and rendering for the restaurants in database here
+    # use modal to expand restaurant information rather than another page
+    return(render_template('my_restaurants.html', title='My Restaurants'))
+
+# Find restaurants page
+@app.route("/find")
+@login_required
+def find():
+    return(render_template('find_restaurants.html', title='Find Restaurants'))

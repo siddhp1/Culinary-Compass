@@ -14,7 +14,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    restaurants = db.relationship('Restaurant', backref='user', lazy=True)
+    restaurant_visits = db.relationship('RestaurantVisit', backref='user', lazy=True)
 
     def get_reset_token(self):
         s = Serializer(app.config['SECRET_KEY'])
@@ -33,13 +33,23 @@ class User(db.Model, UserMixin):
         return(f"User('{self.username}', '{self.email}', '{self.image_file}')")
     
 class Restaurant(db.Model):
-    visit_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(200), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(100), nullable=False)
-    date_visited = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    rating = db.Column(db.Integer, nullable=False)
     keywords = db.Column(db.Text, nullable=False, default='Test')
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    restaurant_visits = db.relationship('RestaurantVisit', backref='restaurant', lazy=True)
+    # price, so on (add other RICH features later)
 
     def __repr__(self):
-        return f"Restaurant('{self.name}', '{self.date_visited}')"
+        return f"Restaurant('{self.name}', '{self.address}')"
+    
+class RestaurantVisit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    restaurant_id = db.Column(db.String(200), db.ForeignKey('restaurant.id'), nullable=False)
+    date_visited = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    rating = db.Column(db.Integer, nullable=False)
+    
+    def __repr__(self):
+        return f"Restaurant Visit('{self.user_id}', '{self.date_visited}', '{self.rating}')"
+    

@@ -12,23 +12,23 @@
                 <button type="submit" class="btn btn-secondary">Search</button>
                 {% if search_query %}
                     <a href="{{ url_for('my') }}" class="btn btn-outline-secondary">Clear</a>
-                    <h5 class="mb-3">Searching for restaurants with keywords: {{ search_query }} ({{ restaurants.total }})</h3>
+                    <h5 class="mb-3">Searching for restaurant visits with keywords: {{ search_query }} ({{ restaurant_visits.total }})</h3>
                 {% endif %}
             </div>
         </div>
     </form>
 
-    {% for restaurant in restaurants.items %}
+    {% for restaurant_visit in restaurant_visits.items %}
     <div class="card mt-3">
         <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-            <h1 class="card-title"><a href="#">{{ restaurant.name }}</a></h1>
+            <h1 class="card-title"><a href="#">{{ restaurant_visit.restaurant.name }}</a></h1>
             </div>
             <div class="col-md-6">
-            <p class="text-muted">{{ restaurant.date_visited.strftime('%Y-%m-%d') }}</p>
-            <p><strong>Location:</strong> {{ restaurant.address }}</p>
-            <p><strong>Rating:</strong> {{ restaurant.rating }}</p>
+            <p class="text-muted">{{ restaurant_visit.date_visited.strftime('%Y-%m-%d') }}</p>
+            <p><strong>Location:</strong> {{ restaurant_visit.restaurant.address }}</p>
+            <p><strong>Rating:</strong> {{ restaurant_visit.rating }}</p>
             </div>
             <button type="button" class="btn btn-info btn-sm m-1" data-toggle="modal" data-target="#infoModal">More</button>
         </div>
@@ -36,19 +36,19 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="infoModal{{ restaurant.id }}" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">{{ restaurant.name }} Details</h5>
+                    <h5 class="modal-title" id="infoModalLabel">{{ restaurant_visit.restaurant.name }} Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted"><strong>Date Visited:</strong> {{ restaurant.date_visited.strftime('%Y-%m-%d') }}</p>
-                    <p><strong>Location:</strong> {{ restaurant.address }}</p>
-                    <p><strong>Rating:</strong> {{ restaurant.rating }}</p>
+                    <p class="text-muted"><strong>Date Visited:</strong> {{ restaurant_visit.date_visited.strftime('%Y-%m-%d') }}</p>
+                    <p><strong>Location:</strong> {{ restaurant_visit.restaurant.address }}</p>
+                    <p><strong>Rating:</strong> {{ restaurant_visit.rating }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -57,9 +57,9 @@
         </div>
     </div>
     {% endfor %}
-    {% for page_num in restaurants.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+    {% for page_num in restaurant_visits.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
       {% if page_num %}
-        {% if restaurants.page == page_num %}
+        {% if restaurant_visits.page == page_num %}
           <a class="btn btn-info mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
         {% else %}
           <a class="btn btn-outline-info mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>

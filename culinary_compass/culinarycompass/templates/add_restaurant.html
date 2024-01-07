@@ -9,35 +9,24 @@
                 <div class="form-group">
                     {{ search_form.name.label(class="form-control-label") }}
                     {% if search_form.name.errors %}
-                        {{ search_form.name(class="form-control form-control-lg is-invalid") }}
+                        {{ search_form.name(id="autocomplete", class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in search_form.name.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ search_form.name(class="form-control form-control-lg") }}
+                        {{ search_form.name(id="autocomplete", class="form-control form-control-lg") }}
                     {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ search_form.location.label(class="form-control-label") }}
-                    {% if search_form.location.errors %}
-                        {{ search_form.location(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in search_form.location.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ search_form.location(class="form-control form-control-lg") }}
-                    {% endif %}
+                    <input type="hidden" name="place_latlng" id="place_latlng">
                 </div>
             </fieldset>
             <div class="form-group">
                 {{ search_form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
-    </div>  
+    </div>
+
     {% if submit_form_visible %}
     <div class="content-section">
         <form method="POST" action="">
@@ -78,4 +67,24 @@
     </div>
     {% endif %}
 </div>
+<script>
+    // Load the API key from the server side
+    var googlePlacesAPIKey = '{{ key }}';
+    // Callback function to initialize Google Places Autocomplete
+    async function initAutocomplete() {
+        var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), {
+            apiKey: googlePlacesAPIKey,
+            libraries: ['places']
+        });
+        // Listen for the 'place_changed' event
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            // Get the latitude and longitude
+            var latlng = place.geometry.location.lat() + ',' + place.geometry.location.lng();
+            // Set the value of the hidden input field
+            document.getElementById('place_latlng').value = latlng;
+        });
+    }
+    initAutocomplete();
+</script>
 {% endblock content %}

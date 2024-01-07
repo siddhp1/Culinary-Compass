@@ -79,7 +79,6 @@ class ResetPasswordForm(FlaskForm):
 # Search for restaurants form
 class SearchRestaurantForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    location = TextAreaField('Location', validators=[DataRequired()])
     submit = SubmitField('Search')
 
 # Submit restaurant form
@@ -87,8 +86,5 @@ class SubmitRestaurantForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()])
     rating = IntegerField('Rating', validators=[DataRequired()])
     submit = SubmitField('Add Restaurant')
-
-    # This will be dictated by the maps API
-    # What information is required to find and validate that the restaurant exists
     
 # Classes for adding the rating field

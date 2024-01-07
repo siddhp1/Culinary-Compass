@@ -11,7 +11,7 @@ from culinarycompass.forms import (RegistrationForm,
                                    ResetPasswordForm,
                                    SearchRestaurantForm,
                                    SubmitRestaurantForm)
-from culinarycompass.models import User, Restaurant
+from culinarycompass.models import User, Restaurant, RestaurantVisit
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from culinarycompass.mapstest import Maps
@@ -135,50 +135,83 @@ def reset_token(token):
     return(render_template('reset_token.html', title='Reset Password', form=form))
 
 # Add restaurant page
+import requests
+
 @app.route("/add", methods=['GET', 'POST'])
 @login_required
 def add():
     search_form = SearchRestaurantForm()
     submit_form = SubmitRestaurantForm()
-    
+
     if search_form.validate_on_submit():
-        # Temporary check for testing
-        temp = 1
-        # After, access the helper class for making maps API requests
-        # this will determine the conditonal
+        restaurant_full_name = search_form.name.data
+        restaurant_coords = request.form['place_latlng']
         
-        # don't know if i need this for later, but it is to keep the data in a cookie
-        session['name'] = search_form.name.data
-        session['location'] = search_form.location.data
+        session['rest_id'] = restaurant_full_name
+
+        # printing information for debugging
+        print(f"Restaurant Full Name/ID: {restaurant_full_name}")
+        print(f"Restaurant LATLNG: {restaurant_coords}")
         
-        if temp == 1:
-            flash('Searching for restaurant', 'success')
+        found = False
+        
+        # Only going to access API if the information does not already exist in the database
+        restaurant_exists = Restaurant.query.filter_by(id=restaurant_full_name).first()
+        
+        if not restaurant_exists:
+            # Here we need to access the foursquare API and add restaurant to database
+            # Split the string at the first comma
+            parts = restaurant_full_name.split(', ', 1)
+
+            # Use the part before the first comma
+            restaurant_name = parts[0]
+            
+            url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}"
+
+            # make api key an app variable
+            headers = {
+                "accept": "application/json",
+                "Authorization": "fsq3rdBp1CpN4srqcrAxsXRV9NYfsBzNdDpsyBDSkNf1y5I="
+            }
+
+            # NEED TO ADD ERROR HANDLING HERE
+            response = requests.get(url, headers=headers)
+            found = True
+            
+            # Parse the JSON data
+            parsed_data = response.json()
+
+            # Extract information to add to DB
+            address = parsed_data['place']['location']['formatted_address']
+
+            # Add the information to the DB here
+            # from the response, for now, add name and address to the DB
+            restaurant = Restaurant(id = restaurant_full_name, name = restaurant_name, address = address)
+            db.session.add(restaurant)
+            db.session.commit()
+        else:
+            found = True
+        
+        if found:
+            flash('Restaurant found!', 'success')
             return render_template('add_restaurant.html', search_form=search_form, submit_form=submit_form, submit_form_visible=True)
         else:
             flash('Restaurant not found.', 'danger')
             return(redirect(url_for('add')))
-    
+
     if submit_form.validate_on_submit():
-        # Just for testing
-        flash('Submitting restaurant', 'success')
-        
-        name = session['name']
-        location = session['location']
         date = submit_form.date.data
         rating = submit_form.rating.data
         
-        print(type(location))
-        print(type(rating))
-        
         # Add to database here
-        restaurant = Restaurant(name = name, address = location, date_visited = date, rating=rating, user_id = current_user.id)
-        db.session.add(restaurant)
+        restaurant_visit = RestaurantVisit(user_id = current_user.id, restaurant_id = session['rest_id'], date_visited = date, rating=rating)
+        db.session.add(restaurant_visit)
         db.session.commit()
         
-        #flash('Restaurant has been added', 'success')
-        return(redirect(url_for('my'))) # Redirect to the my restaurant page to see restaurant history
-    
-    return(render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, submit_form=submit_form, submit_form_visible=False))
+        flash('Added Restaurant', 'success')
+        return(redirect(url_for('my')))
+
+    return render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True)
 
 # My restaurants page
 @app.route("/my")
@@ -190,19 +223,19 @@ def my():
     search_query = request.args.get('q', '').strip()
     
     # Build the database query to filter by user and search query
-    base_query = Restaurant.query.filter_by(user_id=current_user.id)
+    base_query = RestaurantVisit.query.filter_by(user_id=current_user.id)
     if search_query:
         search_filter = or_(
             # Currently searching for keywords in name and address
             # WILL EXPAND TO KEYWORDS LIKE GLUTEN FREE AND CUSINES
-            Restaurant.name.ilike(f"%{search_query}%"),
-            Restaurant.address.ilike(f"%{search_query}%")
+            RestaurantVisit.restaurant.has(Restaurant.name.ilike(f"%{search_query}%")),
+            RestaurantVisit.restaurant.has(Restaurant.address.ilike(f"%{search_query}%"))
         )
-        restaurants = base_query.filter(search_filter).order_by(Restaurant.date_visited.desc()).paginate(page=page, per_page=3)
+        restaurant_visits = base_query.filter(search_filter).order_by(RestaurantVisit.date_visited.desc()).paginate(page=page, per_page=3)
     else:
-        restaurants = base_query.order_by(Restaurant.date_visited.desc()).paginate(page=page, per_page=3)
+        restaurant_visits = base_query.order_by(RestaurantVisit.date_visited.desc()).paginate(page=page, per_page=3)
 
-    return(render_template('my_restaurants.html', title='My Restaurants', restaurants=restaurants, search_query=search_query))
+    return(render_template('my_restaurants.html', title='My Restaurants', restaurant_visits=restaurant_visits, search_query=search_query))
 
 # Find restaurants page
 @app.route("/find")

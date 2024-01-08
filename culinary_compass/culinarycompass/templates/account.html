@@ -53,8 +53,40 @@
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
-
-        <!-- questionnaire form here -->
+        <form method="POST" action="" novalidate enctype="multipart/form-data">
+            {{ profile_form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Dietary Profile</legend>
+                {% for choice, label in profile_form.dietary_preference.choices %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="{{ profile_form.dietary_preference.name }}" 
+                            id="{{ choice }}" value="{{ choice }}" {% if profile_form.dietary_preference.data == choice %}checked{% endif %}>
+                        <label class="form-check-label" for="{{ choice }}">{{ label }}</label>
+                    </div>
+                {% endfor %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="defaultCheck2">
+                    Gluten-Free?
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="defaultCheck2">
+                    Allergies
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="defaultCheck2">
+                    Alcohol
+                    </label>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ profile_form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
     </div>
 </div>
 {% endblock content %}

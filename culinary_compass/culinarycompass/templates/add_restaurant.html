@@ -47,16 +47,20 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{ submit_form.rating.label(class="form-control-label") }}
+                    <label class="form-control-label">Rating</label>
+                    <div class="rating-stars">
+                        {% for rating, label in submit_form.rating.choices %}
+                            <input type="radio" name="{{ submit_form.rating.name }}" value="{{ rating }}"
+                                   {% if submit_form.rating.data == rating %}checked{% endif %} class="star">
+                            <label class="star-label">{{ label }}</label>
+                        {% endfor %}
+                    </div>
                     {% if submit_form.rating.errors %}
-                        {{ submit_form.rating(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
+                        <div class="invalid-feedback d-block">
                             {% for error in submit_form.rating.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
-                    {% else %}
-                        {{ submit_form.rating(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
             </fieldset>

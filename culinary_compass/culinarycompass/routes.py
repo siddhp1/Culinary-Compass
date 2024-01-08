@@ -10,7 +10,8 @@ from culinarycompass.forms import (RegistrationForm,
                                    RequestResetForm,
                                    ResetPasswordForm,
                                    SearchRestaurantForm,
-                                   SubmitRestaurantForm)
+                                   SubmitRestaurantForm,
+                                   QuestionnaireForm)
 from culinarycompass.models import User, Restaurant, RestaurantVisit
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -91,7 +92,22 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return(render_template('account.html', title='Account', image_file=image_file, form=form))
+    
+    profile_form = QuestionnaireForm()
+    if profile_form.validate_on_submit():
+        current_user.dietary_preferences.dietary_preference = profile_form.dietary_preference.data
+        current_user.dietary_preferences.gluten = profile_form.gluten.data
+        current_user.dietary_preferences.allergies = profile_form.allergies.data
+        current_user.dietary_preferences.alcohol = profile_form.alcohol.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return(redirect(url_for('account')))
+    # elif request.method == 'GET':
+    #     profile_form.dietary_preference.data = current_user.dietary_preferences.dietary_preference
+    #     profile_form.gluten.data = current_user.dietary_preferences.gluten
+    #     profile_form.allergies.data = current_user.dietary_preferences.allergies
+    #     profile_form.alcohol.data = current_user.dietary_preferences.alcohol
+    return(render_template('account.html', title='Account', image_file=image_file, form=form, profile_form=profile_form))
 
 # Reset password pages
 def send_reset_email(user):
@@ -140,75 +156,91 @@ import requests
 @app.route("/add", methods=['GET', 'POST'])
 @login_required
 def add():
+    # Initialize forms
     search_form = SearchRestaurantForm()
     submit_form = SubmitRestaurantForm()
 
+    # If input to the search form is valid
     if search_form.validate_on_submit():
         restaurant_full_name = search_form.name.data
         restaurant_coords = request.form['place_latlng']
         
+        # Set 'rest_id' as a session variable used for the restaurant id
         session['rest_id'] = restaurant_full_name
-
-        # printing information for debugging
-        print(f"Restaurant Full Name/ID: {restaurant_full_name}")
-        print(f"Restaurant LATLNG: {restaurant_coords}")
         
+        # If a restaurant is found
         found = False
         
-        # Only going to access API if the information does not already exist in the database
+        # Check if restaurant searched is found in the database
         restaurant_exists = Restaurant.query.filter_by(id=restaurant_full_name).first()
         
+        # If restaurant is not found in database, fetch from Foursquare Places API
         if not restaurant_exists:
-            # Here we need to access the foursquare API and add restaurant to database
-            # Split the string at the first comma
+            # Get name of restaurant from google autocomplete
             parts = restaurant_full_name.split(', ', 1)
-
-            # Use the part before the first comma
             restaurant_name = parts[0]
             
+            # API request URL
             url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}"
 
-            # make api key an app variable
+            # API settings and key
+            # MAKE AN APP/ENVIRONMENT VARIABLE
             headers = {
                 "accept": "application/json",
                 "Authorization": "fsq3rdBp1CpN4srqcrAxsXRV9NYfsBzNdDpsyBDSkNf1y5I="
             }
-
-            # NEED TO ADD ERROR HANDLING HERE
-            response = requests.get(url, headers=headers)
-            found = True
             
+            # Make the API request
+            response = requests.get(url, headers=headers)
+
             # Parse the JSON data
             parsed_data = response.json()
 
-            # Extract information to add to DB
-            address = parsed_data['place']['location']['formatted_address']
+            # Check if a match is found
+            if 'place' in parsed_data and 'location' in parsed_data['place']:
+                # Match found, extract information to add to database
+                # ADD OTHER EXTRACTIONS HERE
+                address = parsed_data['place']['location']['formatted_address']
 
-            # Add the information to the DB here
-            # from the response, for now, add name and address to the DB
-            restaurant = Restaurant(id = restaurant_full_name, name = restaurant_name, address = address)
-            db.session.add(restaurant)
-            db.session.commit()
+                # Add the information to the database
+                restaurant = Restaurant(id=restaurant_full_name, name=restaurant_name, address=address)
+                db.session.add(restaurant)
+                db.session.commit()
+
+                # Set found to true
+                found = True
+            else:
+                # Restaurant not found in Foursquare database
+                flash('Restaurant information could not be found!', 'danger')
+                found = False
         else:
+            # If restaurant is found in the culinary compass database
             found = True
         
+        # Flash status messages to screen
         if found:
             flash('Restaurant found!', 'success')
+            # Re-render page with submit form
             return render_template('add_restaurant.html', search_form=search_form, submit_form=submit_form, submit_form_visible=True)
         else:
             flash('Restaurant not found.', 'danger')
+            # Refresh page for user to start again
             return(redirect(url_for('add')))
 
+    # If input to submit form is valid
     if submit_form.validate_on_submit():
         date = submit_form.date.data
         rating = submit_form.rating.data
         
-        # Add to database here
+        # Add the information to the database
         restaurant_visit = RestaurantVisit(user_id = current_user.id, restaurant_id = session['rest_id'], date_visited = date, rating=rating)
         db.session.add(restaurant_visit)
         db.session.commit()
         
-        flash('Added Restaurant', 'success')
+        # Flash status message
+        flash('Added restaurant to my restaurants', 'success')
+        
+        # Redirect user to my restaurants page
         return(redirect(url_for('my')))
 
     return render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True)

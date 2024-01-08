@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, TextAreaField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from culinarycompass.models import User
 
@@ -56,7 +56,13 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('Email already in use. Please use a different email.')
 
 # Questionnaire form
-
+class QuestionnaireForm(FlaskForm):
+    choices = [('vegan', 'Vegan'), ('vegetarian', 'Vegetarian'), ('neither', 'Neither')]
+    dietary_preference = RadioField('Dietary Preference', choices=choices)
+    gluten = BooleanField('Gluten-Free')
+    allergies = BooleanField('Allegies')
+    alcohol = BooleanField('Alcohol')
+    submit = SubmitField('Submit')
 
 # Request password reset form
 class RequestResetForm(FlaskForm):
@@ -84,7 +90,6 @@ class SearchRestaurantForm(FlaskForm):
 # Submit restaurant form
 class SubmitRestaurantForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()])
-    rating = IntegerField('Rating', validators=[DataRequired()])
+    rating = RadioField('Rating', choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], coerce=int)
     submit = SubmitField('Add Restaurant')
-    
-# Classes for adding the rating field
+

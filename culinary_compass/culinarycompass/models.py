@@ -14,6 +14,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
+    dietary_preferences_id = db.Column(db.Integer, db.ForeignKey('dietary_preferences.id'), nullable=False)
+    dietary_preferences = db.relationship('DietaryPreferences', backref='user', uselist=False)
     restaurant_visits = db.relationship('RestaurantVisit', backref='user', lazy=True)
 
     def get_reset_token(self):
@@ -31,6 +33,15 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return(f"User('{self.username}', '{self.email}', '{self.image_file}')")
+    
+class DietaryPreferences(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
+    dietary_preference = db.Column(db.String(20), default='Neither')
+    gluten = db.Column(db.Boolean, default=False)
+    allergies = db.Column(db.Boolean, default=False)
+    alcohol = db.Column(db.Boolean, default=False)
+    user = db.relationship('User', backref='dietary_preferences', uselist=False)
     
 class Restaurant(db.Model):
     id = db.Column(db.String(200), primary_key=True)

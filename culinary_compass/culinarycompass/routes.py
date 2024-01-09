@@ -12,7 +12,7 @@ from culinarycompass.forms import (RegistrationForm,
                                    SearchRestaurantForm,
                                    SubmitRestaurantForm,
                                    QuestionnaireForm)
-from culinarycompass.models import User, Restaurant, RestaurantVisit
+from culinarycompass.models import User, Restaurant, RestaurantVisit, RestaurantFeature
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
     
@@ -182,13 +182,13 @@ def add():
             restaurant_name = parts[0]
             
             # API request URL
-            url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}"
-
+            url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}&fields=categories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
+            
             # API settings and key
             # MAKE AN APP/ENVIRONMENT VARIABLE
             headers = {
                 "accept": "application/json",
-                "Authorization": "fsq3rdBp1CpN4srqcrAxsXRV9NYfsBzNdDpsyBDSkNf1y5I="
+                "Authorization": "fsq3891kysJBh536fngR4yL2X7D8lqkaNSF8vzQTtQNZqs0="
             }
             
             # Make the API request
@@ -196,16 +196,86 @@ def add():
 
             # Parse the JSON data
             parsed_data = response.json()
+            
+            print(f"{response.text}this")
 
             # Check if a match is found
-            if 'place' in parsed_data and 'location' in parsed_data['place']:
+            if 'place' in parsed_data and 'location' in parsed_data['place']:                
                 # Match found, extract information to add to database
-                # ADD OTHER EXTRACTIONS HERE
+                 
+                categories = [f"{category['short_name']}:{category['id']}" for category in parsed_data['place']['categories']]
+                categories_str = ",".join(categories)
+
+                if 'menu' in parsed_data['place']:
+                    menu = parsed_data['place']['menu']
+                else:
+                    menu = None
+
+                if 'website' in parsed_data['place']:
+                    website = parsed_data['place']['website']
+                else:
+                    website = None
+                    
+                if 'tastes' in parsed_data['place']:
+                    tastes = parsed_data['place']['tastes']
+                    tastes_str = ",".join(tastes)
+                else:
+                    tastes_str = None
+
+                price = parsed_data['place']['price']
                 address = parsed_data['place']['location']['formatted_address']
+                description = parsed_data['place']['description']
 
                 # Add the information to the database
-                restaurant = Restaurant(id=restaurant_full_name, name=restaurant_name, address=address)
+                restaurant = Restaurant(
+                    id=restaurant_full_name,
+                    name=restaurant_name, 
+                    address=address, 
+                    category=categories_str, 
+                    website=website, 
+                    menu=menu, 
+                    price=price, 
+                    description=description, 
+                    tastes=tastes_str
+                )
+                
+                features_data = parsed_data['place']['features']
+
+                # Create a list of feature names based on the RestaurantFeature model columns
+                feature_columns = [column.name for column in RestaurantFeature.__table__.columns]
+                
+                # Initialize the dictionary to store feature values
+                feature_values = {}
+
+                # Sections to ignore
+                ignore_sections = ['payment', 'services', 'amenities']
+
+                # Flatten nested structures in features_data
+                def flatten_features(data, prefix=""):
+                    flat_data = {}
+                    for key, value in data.items():
+                        if key in ignore_sections:
+                            continue  # Skip sections to be ignored
+                        if isinstance(value, dict):
+                            flat_data.update(flatten_features(value, f"{prefix}{key}_"))
+                        else:
+                            flat_data[key] = value  # Use only the last part of the prefix as the feature name
+                    return flat_data
+
+                flattened_features = flatten_features(features_data)
+
+                # Iterate through features and check if the corresponding column exists
+                for feature_name, feature_data in flattened_features.items():
+                    if feature_name in feature_columns:
+                        # If the feature column exists, set its value in the feature_values dictionary
+                        feature_values[feature_name] = feature_data
+
+                # Add features to the database
+                restaurant_features = RestaurantFeature(restaurant_id=restaurant.id, **feature_values)
+                
+                # Add features to the database
                 db.session.add(restaurant)
+                db.session.add(restaurant_features)
                 db.session.commit()
 
                 # Set found to true
@@ -265,6 +335,7 @@ def my():
             RestaurantVisit.restaurant.has(Restaurant.address.ilike(f"%{search_query}%"))
         )
         restaurant_visits = base_query.filter(search_filter).order_by(RestaurantVisit.date_visited.desc()).paginate(page=page, per_page=3)
+        
     else:
         restaurant_visits = base_query.order_by(RestaurantVisit.date_visited.desc()).paginate(page=page, per_page=3)
 

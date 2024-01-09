@@ -15,12 +15,12 @@ from culinarycompass.forms import (RegistrationForm,
 from culinarycompass.models import User, Restaurant, RestaurantVisit
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
-from culinarycompass.mapstest import Maps
     
 # Home page
 @app.route("/")
 @app.route("/home")
 def home():
+    # Render the home template
     return(render_template('home.html', title='Home'))
 
 # Register page
@@ -58,7 +58,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-    return(redirect(url_for('home')))
+    return(redirect(url_for('login')))
 
 # Account page
 def save_picture(form_picture):
@@ -95,18 +95,19 @@ def account():
     
     profile_form = QuestionnaireForm()
     if profile_form.validate_on_submit():
-        current_user.dietary_preferences.dietary_preference = profile_form.dietary_preference.data
-        current_user.dietary_preferences.gluten = profile_form.gluten.data
-        current_user.dietary_preferences.allergies = profile_form.allergies.data
-        current_user.dietary_preferences.alcohol = profile_form.alcohol.data
+        current_user.dietary_preference = profile_form.dietary_preference.data
+        current_user.gluten = profile_form.gluten.data
+        current_user.allergies = profile_form.allergies.data
+        current_user.alcohol = profile_form.alcohol.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return(redirect(url_for('account')))
-    # elif request.method == 'GET':
-    #     profile_form.dietary_preference.data = current_user.dietary_preferences.dietary_preference
-    #     profile_form.gluten.data = current_user.dietary_preferences.gluten
-    #     profile_form.allergies.data = current_user.dietary_preferences.allergies
-    #     profile_form.alcohol.data = current_user.dietary_preferences.alcohol
+    elif request.method == 'GET':
+        profile_form.dietary_preference.data = current_user.dietary_preference
+        profile_form.gluten.data = current_user.gluten
+        profile_form.allergies.data = current_user.allergies
+        profile_form.alcohol.data = current_user.alcohol
+        
     return(render_template('account.html', title='Account', image_file=image_file, form=form, profile_form=profile_form))
 
 # Reset password pages

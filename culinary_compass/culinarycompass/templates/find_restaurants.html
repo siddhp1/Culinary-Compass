@@ -1,6 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="col-md-12 mx-auto text-center">
-    <h1>Find Restaurants</h1>      
+    <h1>Find Restaurants</h1>
+    <h4>Here are some recommendations based on the restaurants you like.</h4>
+
+    
+    {# search location system right here #}
+
+
+    <a href="{{ url_for('find') }}" class="btn btn-secondary">Refresh</a>    
 </div>
 {% endblock content %}

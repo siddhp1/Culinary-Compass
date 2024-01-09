@@ -46,13 +46,63 @@ class Restaurant(db.Model):
     id = db.Column(db.String(200), primary_key=True)  # Restaurant ID, primary key
     name = db.Column(db.String(100), nullable=False)  # Restaurant name
     address = db.Column(db.String(100), nullable=False)  # Restaurant address
-    keywords = db.Column(db.Text, nullable=False, default='Test')  # Keywords associated with the restaurant
+    category = db.Column(db.Text, nullable=False) # Restaurant category
+    website = db.Column(db.String(200), nullable=True)  # Restaurant website
+    menu = db.Column(db.String(200), nullable=True)  # Restaurant menu
+    price = db.Column(db.Integer) # Restaurant price category
+    description = db.Column(db.Text)  # Restaurant description
+    tastes = db.Column(db.Text, nullable=True)  # List of tastes associated with the restaurant
     restaurant_visits = db.relationship('RestaurantVisit', backref='restaurant', lazy=True)  # Restaurant's visits
-    # Add other rich information after
+    features = db.relationship('RestaurantFeature', backref='restaurant', lazy=True)  # Relationship with Feature table
 
     def __repr__(self):
         # String representation of the Restaurant object
         return f"Restaurant('{self.name}', '{self.address}')"
+
+class RestaurantFeature(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    restaurant_id = db.Column(db.String(200), db.ForeignKey('restaurant.id'), nullable=False)
+    
+    # Food and drink features
+    bar_service = db.Column(db.Boolean, default=False)
+    beer = db.Column(db.Boolean, default=False)
+    byo = db.Column(db.Boolean, default=False)
+    cocktails = db.Column(db.Boolean, default=False)
+    full_bar = db.Column(db.Boolean, default=False)
+    wine = db.Column(db.Boolean, default=False)
+
+    # Meals features
+    bar_snacks = db.Column(db.Boolean, default=False)
+    breakfast = db.Column(db.Boolean, default=False)
+    brunch = db.Column(db.Boolean, default=False)
+    lunch = db.Column(db.Boolean, default=False)
+    happy_hour = db.Column(db.Boolean, default=False)
+    dessert = db.Column(db.Boolean, default=False)
+    dinner = db.Column(db.Boolean, default=False)
+    tasting_menu = db.Column(db.Boolean, default=False)
+
+    # Other attributes
+    business_meeting = db.Column(db.String(200))
+    clean = db.Column(db.String(200))
+    crowded = db.Column(db.String(200))
+    dates_popular = db.Column(db.String(200))
+    dressy = db.Column(db.String(200))
+    families_popular = db.Column(db.String(200))
+    gluten_free_diet = db.Column(db.String(200))
+    good_for_dogs = db.Column(db.String(200))
+    groups_popular = db.Column(db.String(200))
+    healthy_diet = db.Column(db.String(200))
+    late_night = db.Column(db.String(200))
+    noisy = db.Column(db.String(200))
+    quick_bite = db.Column(db.String(200))
+    romantic = db.Column(db.String(200))
+    service_quality = db.Column(db.String(200))
+    singles_popular = db.Column(db.String(200))
+    special_occasion = db.Column(db.String(200))
+    trendy = db.Column(db.String(200))
+    value_for_money = db.Column(db.String(200))
+    vegan_diet = db.Column(db.String(200))
+    vegetarian_diet = db.Column(db.String(200))
 
 class RestaurantVisit(db.Model):
     # RestaurantVisit model representing user visits to restaurants

@@ -11,7 +11,8 @@ from culinarycompass.forms import (RegistrationForm,
                                    ResetPasswordForm,
                                    SearchRestaurantForm,
                                    SubmitRestaurantForm,
-                                   QuestionnaireForm)
+                                   QuestionnaireForm,
+                                   FindRestaurantForm)
 from culinarycompass.models import User, Restaurant, RestaurantVisit, RestaurantFeature
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -345,4 +346,11 @@ def my():
 @app.route("/find")
 @login_required
 def find():
-    return(render_template('find_restaurants.html', title='Find Restaurants'))
+    submit_form = FindRestaurantForm()
+    
+    if submit_form.validate_on_submit():
+        coordinates = request.form.get('coordinates')
+        # Do something with the coordinates (e.g., store in a database)
+        print(f'Received coordinates: {coordinates}')
+
+    return(render_template('find_restaurants.html', title='Find Restaurants', form = submit_form, key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True))

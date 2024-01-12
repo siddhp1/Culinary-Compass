@@ -97,7 +97,3 @@ class SubmitRestaurantForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()])
     rating = RadioField('Rating', choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], coerce=int)
     submit = SubmitField('Add Restaurant')
-
-class FindRestaurantForm(FlaskForm):
-    submit = SubmitField('Search')
-    

@@ -1,7 +1,7 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request, session
+from flask import jsonify, render_template, url_for, flash, redirect, request, session
 from sqlalchemy import or_
 from culinarycompass import app, db, bcrypt, mail
 from culinarycompass.forms import (RegistrationForm,
@@ -11,8 +11,7 @@ from culinarycompass.forms import (RegistrationForm,
                                    ResetPasswordForm,
                                    SearchRestaurantForm,
                                    SubmitRestaurantForm,
-                                   QuestionnaireForm,
-                                   FindRestaurantForm)
+                                   QuestionnaireForm)
 from culinarycompass.models import User, Restaurant, RestaurantVisit, RestaurantFeature
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -343,14 +342,25 @@ def my():
     return(render_template('my_restaurants.html', title='My Restaurants', restaurant_visits=restaurant_visits, search_query=search_query))
 
 # Find restaurants page
-@app.route("/find")
+@app.route("/update_coordinates", methods=['POST'])
+def update_coordinates():
+    # Get coordinates from the request
+    lat = request.form.get('lat')
+    lng = request.form.get('lng')
+    
+    print(lat, lng)
+
+    # Store the coordinates in the session
+    session['coordinates'] = {'lat': lat, 'lng': lng}
+    
+    return jsonify({'status': 'success'})
+
+@app.route("/find", methods=['GET', 'POST'])
 @login_required
 def find():
-    submit_form = FindRestaurantForm()
-    
-    if submit_form.validate_on_submit():
-        coordinates = request.form.get('coordinates')
-        # Do something with the coordinates (e.g., store in a database)
-        print(f'Received coordinates: {coordinates}')
+    lat = session['coordinates']['lat']
+    lng = session['coordinates']['lng']
 
-    return(render_template('find_restaurants.html', title='Find Restaurants', form = submit_form, key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True))
+    print(lat, lng)
+    
+    return(render_template('find_restaurants.html', title='Find Restaurants', key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True))

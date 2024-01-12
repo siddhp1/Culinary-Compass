@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="col-md-6 mx-auto">
     <div class="content-section">
         <form method="POST" action="" novalidate>
             {{ form.hidden_tag() }}
@@ -69,5 +68,4 @@
             Already Have An Account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
         </small>
     </div>
-</div>
 {% endblock content %}

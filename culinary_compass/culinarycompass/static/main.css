@@ -5,6 +5,7 @@ body {
     background: #fafafa;
     font-family: 'DM Sans', sans-serif;
     color: #333333;
+    margin-top: 61px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -17,9 +18,8 @@ ul {
     margin: 0;
 }
 
-#main {
-    /* Padding for the navbar */
-    padding-top: 61px;
+#other {
+    margin-top: 5rem;
 }
 
 /* Navigation bar styles */
@@ -68,68 +68,31 @@ ul {
     font-size: 2.5rem;
 }
 
-
-/* Specifc */
+/* Home Page */
 .container-fluid {
     padding: 0;
+}
+
+.container-section {
+    padding: 25px;
+}
+
+.header-home {
+    font-size: 10rem;
 }
 
 #landing {
     background-color: #FAA307;
     color: #444444;
-    height: 90vh;
+    height: 94vh;
 }
 
 #about {
     background-color: #F48C06;
-    height: 90vh;
+    height: 50vh;
 }
 
 #tutorial {
     background-color: #FAA307;
-    height: 90vh;
-}
-
-
-
-
-
-
-
-
-/* Nonce */
-.article-title {
-    color: #444444;
-}
-
-a.article-title:hover {
-    color: #428bca;
-    text-decoration: none;
-}
-
-.article-content {
-    white-space: pre-line;
-}
-
-.article-img {
-    height: 65px;
-    width: 65px;
-    margin-right: 16px;
-}
-
-.article-metadata {
-    padding-bottom: 1px;
-    margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
-}
-
-.article-metadata a:hover {
-    color: #333;
-    text-decoration: none;
-}
-
-.article-svg {
-    width: 25px;
-    height: 25px;
-    vertical-align: middle;
+    height: 70vh;
 }

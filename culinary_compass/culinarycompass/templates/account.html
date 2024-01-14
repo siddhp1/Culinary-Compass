@@ -86,5 +86,12 @@
                 {{ profile_form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
+        <form method="POST" action="" novalidate enctype="multipart/form-data">
+            {{ report_form.hidden_tag() }}
+            <legend class="border-bottom mb-4">Your Culinary Mapped</legend>
+            <div class="form-group">
+                {{ report_form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
     </div>
 {% endblock content %}

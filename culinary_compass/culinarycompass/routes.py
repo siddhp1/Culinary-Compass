@@ -11,7 +11,8 @@ from culinarycompass.forms import (RegistrationForm,
                                    ResetPasswordForm,
                                    SearchRestaurantForm,
                                    SubmitRestaurantForm,
-                                   QuestionnaireForm)
+                                   QuestionnaireForm,
+                                   ReportForm)
 from culinarycompass.models import User, Restaurant, RestaurantVisit, RestaurantFeature
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -75,6 +76,32 @@ def save_picture(form_picture):
     
     return(picture_fn)
 
+def send_report_email(pdf_path):
+    msg = Message('Your Culinary Mapped',
+                  sender='siddhdevelopment@gmail.com',
+                  recipients=[current_user.email])
+
+    msg.body = f'''Here is your Culinary Mapped:'''
+    
+    # Extract the username from the attachment path
+    filename = os.path.basename(pdf_path)
+
+    # Attach the PDF file
+    with app.open_resource(pdf_path) as attachment:
+        msg.attach(filename, 'application/pdf', attachment.read())
+
+    # Send the email
+    mail.send(msg)
+    
+def delete_report(pdf_path):
+    try:
+        os.remove(pdf_path)
+        print(f"File deleted successfully: {pdf_path}")
+    except OSError as e:
+        print(f"Error deleting file: {pdf_path} - {e}")
+
+from .generate_report import ReportGenerator
+
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -108,7 +135,23 @@ def account():
         profile_form.allergies.data = current_user.allergies
         profile_form.alcohol.data = current_user.alcohol
         
-    return(render_template('account.html', title='Account', image_file=image_file, form=form, profile_form=profile_form))
+    report_form = ReportForm()
+    if report_form.validate_on_submit():
+        pdf_name = current_user.username
+        
+        pdf_path = os.path.join(app.root_path, 'static/reports', pdf_name + ".pdf")
+        
+        ReportGenerator.create_pdf(pdf_path, current_user.username)
+
+        send_report_email(pdf_path)
+
+        # Delete the report
+        delete_report(pdf_path)
+        
+        flash('A report has been sent to your email', 'success')
+        return(redirect(url_for('account')))
+        
+    return(render_template('account.html', title='Account', image_file=image_file, form=form, profile_form=profile_form, report_form=report_form))
 
 # Reset password pages
 def send_reset_email(user):
@@ -358,9 +401,6 @@ def update_coordinates():
 @app.route("/find", methods=['GET', 'POST'])
 @login_required
 def find():
-    lat = session['coordinates']['lat']
-    lng = session['coordinates']['lng']
-
-    print(lat, lng)
+    
     
     return(render_template('find_restaurants.html', title='Find Restaurants', key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True))

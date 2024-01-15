@@ -7,8 +7,16 @@
     <!-- Map container -->
     <div id="map" style="height: 400px;"></div>
 
-    <!-- Button to get coordinates -->
-    <button id="getCoordinatesBtn" class="btn btn-primary">Get Coordinates</button>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+    {% if recommendations %}
+        <h4>recommendations here</h4>
+    {% endif %}
 <div>
 
 <script>
@@ -48,6 +56,11 @@ function initializeMap(initialPosition) {
         position: initialPosition,
         map: map,
         draggable: true
+    });
+
+    // Add a function that sends the marker postion once when the marker is initialized
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+        updateCoordinates(marker.getPosition().lat(), marker.getPosition().lng());
     });
 
     // Event listener to update marker position when it is dragged

@@ -12,11 +12,14 @@
         <!-- Set title to home -->
         <title>Culinary Compass - Home</title>
     </head>
-    <body>
+    <body> 
         <header class="site-header">
             <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
                 <div class="container">
-                    <a class="navbar-brand mr-4" href="{{ url_for('home') }}">Culinary Compass</a>
+                    <a class="navbar-brand mr-4" href="{{ url_for('home') }}">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="nav-account-image rounded-circle">
+                        Culinary Compass
+                    </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                     </button>
@@ -57,8 +60,19 @@
                     <div class="container-section">
                         <div class="col-md-8 mx-auto">
                             <h1>Our Story</h1>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis ornare ex, quis sollicitudin magna elementum ut. Suspendisse at pulvinar dolor, at rutrum eros. Cras non ex ultricies ipsum luctus facilisis. In dignissim suscipit eros. Quisque purus ex, efficitur eget molestie at, laoreet vel mi. Etiam sem magna, mollis vel elit quis, venenatis eleifend erat. Phasellus egestas bibendum ante sed efficitur. Praesent sit amet viverra arcu.</p>
-                            <h3>Insert Logo Here</h3>
+                            <p>
+                                Welcome to Culinary Compass, where the inspiration for our restaurant finding
+                                and recommendation web application was born from the shared joy and occasional
+                                challenges of exploring new cities with family. Navigating unfamiliar streets
+                                and seeking out restaurants that cater to specific dietary preferences became
+                                a familiar ritual. Culinary Compass is our solution to simplify this experience.
+                                We understand the importance of finding vegetarian-friendly options or that perfect
+                                cuisine, and our goal is to make your culinary journey delightful. This platform
+                                goes beyond being a tool; it's your personalized guide to tracking restaurant history
+                                and receiving recommendations tailored to your tastes. Join us on this flavorful journey,
+                                and let Culinary Compass be your companion in discovering memorable dining experiences.
+                            </p>
+                            <img class="logo-img" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
                         </div>
                     </div>
                 </div>
@@ -72,17 +86,33 @@
                             <div class="col-md-4">
                                 <h4>Create an Account</h4>
                                 <h1>Image Here</h1>
-                                <p>Go to the register page and create an account. Then login and customize your account on the account page. You can also add any dietary restrictions using the form at the bottom of the page.</p>
+                                <p>
+                                    Go to the register page and create an account.
+                                    Then login and customize your account on the account page. 
+                                    You can also add any dietary restrictions 
+                                    using the form at the bottom of the page.
+                                </p>
                             </div>
                             <div class="col-md-4">
                                 <h4>Track Your Restaurant Visits</h4>
                                 <h1>Image Here</h1>
-                                <p>Create a history of all of the restaurants you visited. We'll study this and find out what you love to eat. Also, you can generate a recap of your restaurant history whenever you'd like.</p>
+                                <p>
+                                    Create a history of all of the restaurants you visited.
+                                    We'll study this and find out what you love to eat.
+                                    Also, you can generate a recap of your restaurant
+                                    history whenever you'd like.
+                                </p>
                             </div>
                             <div class="col-md-4">
                                 <h4>Find New Restaurants</h4>
                                 <h1>Image Here</h1>
-                                <p>Don't know what to eat? Generate a list of recommended restaurants based on where you are and what you love. We hope that you have an amazing experience with your Culinary Compass!</p>
+                                <p>
+                                    Don't know what to eat?
+                                    Generate a list of recommended restaurants based
+                                    on where you are and what you love.
+                                    We hope that you have an amazing experience
+                                    with your Culinary Compass!
+                                </p>
                             </div>
                         </div>
                     </div>

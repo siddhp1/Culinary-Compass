@@ -33,7 +33,10 @@
                 <!-- Start of the container for the navigation bar -->
                 <div class="container">
                     <!-- Link to the home page -->
-                    <a class="navbar-brand mr-4" href="{{ url_for('home') }}">Culinary Compass</a>
+                    <a class="navbar-brand mr-4" href="{{ url_for('home') }}">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="nav-account-image rounded-circle">
+                        Culinary Compass
+                    </a>
                     <!-- Button to toggle the navigation bar on small screens -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                         <!-- Icon for the toggle button -->

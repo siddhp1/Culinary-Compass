@@ -5,10 +5,20 @@ body {
     background: #fafafa;
     font-family: 'DM Sans', sans-serif;
     color: #333333;
-    margin-top: 61px;
+    /* margin-top: 61px; */
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1 {
+    font-size: 3rem;
+    font-weight: 500;
+}
+
+h2 {
+    font-size: 2.5rem;
+    font-weight: 500;
+}
+
+h1, h2, h3, h4, h5, h6, p{
     padding: 0;
     margin: 0;
     color: #444444;
@@ -47,6 +57,11 @@ ul {
     margin-bottom: 20px;
 }
 
+.align-middle {
+    display: flex;
+    align-items: center;
+}
+
 /* Account images */
 .account-img {
     height: 125px;
@@ -81,6 +96,12 @@ ul {
     font-size: 10rem;
 }
 
+.logo-img {
+    height: 40vh;
+    width: 40vh;
+    object-fit:cover;
+}
+
 #landing {
     background-color: #FAA307;
     color: #444444;
@@ -89,7 +110,7 @@ ul {
 
 #about {
     background-color: #F48C06;
-    height: 50vh;
+    height: 68vh;
 }
 
 #tutorial {

@@ -31,7 +31,9 @@ from culinarycompass.forms import (RegistrationForm,
 from culinarycompass.models import User, Restaurant, RestaurantVisit, RestaurantFeature
 # Import the ReportGenerator class from the generate_report.py file
 from .generate_report import ReportGenerator
-    
+# Import the RecommendationGenerator class from the generate_recommendation.py file
+from .generate_recommendation import RecommendationGenerator
+
 # Home page
 @app.route("/") # Root URL directs to the home page
 @app.route("/home") # Home URL directs to the home page
@@ -60,7 +62,7 @@ def register():
         # Commit the changes to the database
         db.session.commit()
         # Flash a success message
-        flash('Your account has been created. You are now able to log in.', 'success')
+        flash('Your account has been created. You are now able to log in!.', 'success')
         # Redirect to the login page
         return(redirect(url_for('login')))
     # Render the registration template
@@ -332,14 +334,12 @@ def add():
         restaurant_full_name = search_form.name.data
         # Get the coordinates of the restaurant from the form
         restaurant_coords = request.form['place_latlng']
-        # Store the restaurant name in the session (used as the primary key in the database)
-        session['rest_id'] = restaurant_full_name
         
         # Variable to store if restaurant is found in FourSquare database
         found = False
         
         # Check if restaurant searched is already in the database
-        restaurant_exists = Restaurant.query.filter_by(id=restaurant_full_name).first()
+        restaurant_exists = Restaurant.query.filter_by(full_name=restaurant_full_name).first()
         # If restaurant is not found in database, fetch from Foursquare Places API
         if not restaurant_exists:
             # Get name of restaurant from google autocomplete
@@ -347,7 +347,7 @@ def add():
             restaurant_name = parts[0] # Get the name of the restaurant
             
             # FourSquare API request URL with restaurant name and coordinates
-            url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}&fields=categories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
+            url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}&fields=fsq_id%2Ccategories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
             
             # API settings and key
             # MAKE AN APP/ENVIRONMENT VARIABLE
@@ -360,57 +360,40 @@ def add():
             response = requests.get(url, headers=headers)
             # Parse the JSON data
             parsed_data = response.json()
+            
+            print(response.text)
 
             # Check if a match is found
-            if 'place' in parsed_data and 'location' in parsed_data['place']:                
+            if 'place' in parsed_data and 'location' in parsed_data['place']:  
+                
+                # Extract the restaurant id from the response in a session variable
+                fsq_id = parsed_data['place']['fsq_id']
+                session['fsq_id'] = fsq_id  
                  
                 # Extract the category information
                 categories = [f"{category['short_name']}:{category['id']}" for category in parsed_data['place']['categories']]
                 # Store the categories as a comma-separated string
                 categories_str = ",".join(categories) 
-                
-                # Check if restaurant menu information is available
-                if 'menu' in parsed_data['place']:
-                    # Store the menu URL if available
-                    menu = parsed_data['place']['menu']
-                else:
-                    # Otherwise, set the menu URL to None
-                    menu = None
 
-                # Check if restaurant website information is available
-                if 'website' in parsed_data['place']:
-                    # Store the website URL if available
-                    website = parsed_data['place']['website']
-                else:
-                    # Otherwise, set the website URL to None
-                    website = None
-                
+                # Use .get() to fetch the information, if not available it will return None
+                menu = parsed_data['place'].get('menu')
+                website = parsed_data['place'].get('website')
+
                 # Check if restaurant tastes information is available
-                if 'tastes' in parsed_data['place']:
-                    # Get the tastes from the response
-                    tastes = parsed_data['place']['tastes']
-                    # Store the tastes as a comma-separated string
-                    tastes_str = ",".join(tastes)
-                else:
-                    # Otherwise, set the tastes to None
-                    tastes_str = None
-                    
-                # Check if restaurant description information is available
-                if 'description' in parsed_data['place']:
-                    # Get the description from the response
-                    description = parsed_data['place']['description']
-                else:
-                    # Otherwise, set the description to None
-                    description = None
+                tastes = parsed_data['place'].get('tastes')
+                # If tastes is not None, store the tastes as a comma-separated string
+                tastes_str = ",".join(tastes) if tastes else None
 
-                # Get the price from the response
-                price = parsed_data['place']['price']
+                description = parsed_data['place'].get('description')
+                price = parsed_data['place'].get('price')
+
                 # Get the address from the response
                 address = parsed_data['place']['location']['formatted_address']
 
                 # Add the information to the database
                 restaurant = Restaurant(
-                    id=restaurant_full_name,
+                    id=fsq_id,
+                    full_name=restaurant_full_name,
                     name=restaurant_name, 
                     address=address, 
                     category=categories_str, 
@@ -421,17 +404,27 @@ def add():
                     tastes=tastes_str
                 )
                 
-                # Get the features from the response
-                features_data = parsed_data['place']['features']
+                # Check if restaurant price information is available
+                if 'features' in parsed_data['place']:
+                    # Get the price from the response
+                    features_data = parsed_data['place']['features']
+                else:
+                    # Otherwise, set the features to None
+                    features_data = None
+
                 # Create a list of feature names based on the RestaurantFeature model columns
                 feature_columns = [column.name for column in RestaurantFeature.__table__.columns]
                 # Initialize the dictionary to store feature values
                 feature_values = {}
                 # Sections to ignore
                 ignore_sections = ['payment', 'services', 'amenities']
-                
+
                 # Flatten nested structures in features_data
                 def flatten_features(data, prefix=""):
+                    # If data is None, return an empty dictionary
+                    if data is None:
+                        return {}
+
                     # Initialize the dictionary to store flattened features
                     flat_data = {}
                     # Iterate through the features
@@ -449,6 +442,7 @@ def add():
                             flat_data[key] = value # Use only the last part of the prefix as the feature name
                     # Return the flattened features
                     return flat_data
+
                 # Flatten the features
                 flattened_features = flatten_features(features_data)
 
@@ -458,14 +452,16 @@ def add():
                     if feature_name in feature_columns:
                         # If the feature column exists, set its value in the feature_values dictionary
                         feature_values[feature_name] = feature_data
-                        
-                # Create a new RestaurantFeature object with the feature values
-                restaurant_features = RestaurantFeature(restaurant_id=restaurant.id, **feature_values)
-                
+
+                # Only create a RestaurantFeature object if feature_values is not empty
+                if feature_values:
+                    # Create a new RestaurantFeature object with the feature values
+                    restaurant_features = RestaurantFeature(restaurant_id=restaurant.id, **feature_values)
+                    # Add the restaurant features to the database
+                    db.session.add(restaurant_features)
+
                 # Add the restaurant to the database 
                 db.session.add(restaurant)
-                # Add the restaurant features to the database
-                db.session.add(restaurant_features)
                 # Commit the changes to the database
                 db.session.commit()
 
@@ -500,7 +496,7 @@ def add():
         rating = submit_form.rating.data
         
         # Create a new restaurant visit object in the database
-        restaurant_visit = RestaurantVisit(user_id = current_user.id, restaurant_id = session['rest_id'], date_visited = date, rating=rating)
+        restaurant_visit = RestaurantVisit(user_id = current_user.id, restaurant_id = session['fsq_id'], date_visited = date, rating=rating)
         # Add the restaurant visit to the database
         db.session.add(restaurant_visit)
         # Commit the changes to the database
@@ -545,41 +541,34 @@ def my():
     # Render the my restaurants template
     return(render_template('my_restaurants.html', title='My Restaurants', restaurant_visits=restaurant_visits, search_query=search_query))
 
-
-
-
-
-# COMMENT THIS AFTEr 
-
-
-
 # Find restaurants page
-@app.route("/update_coordinates", methods=['POST'])
+# Update coordinates URL directs to the find restaurants page
+@app.route("/update_coordinates", methods=['POST']) # POST requests allowed for form submission
 def update_coordinates():
-    # Get coordinates from the request
+    # Get the latitude from the form
     lat = request.form.get('lat')
+    # Get the longitude from the form
     lng = request.form.get('lng')
-
+    # Store the as a comma-separated string
+    coords = f"{lat},{lng}"
     # Store the coordinates in the session
-    session['coordinates'] = {'lat': lat, 'lng': lng}
-    
+    session['coordinates'] = coords
+    # Return a success message
     return jsonify({'status': 'success'})
 
-from .generate_recommendation import RecommendationGenerator
-
-@app.route("/find", methods=['GET', 'POST'])
-@login_required
+# Find URL directs to the find restaurants page
+@app.route("/find", methods=['GET', 'POST']) # GET and POST requests allowed for form submission
+@login_required # Login required to access the find restaurants page
 def find():
+    # Initialize the recommendation form
     form = RecommendationForm()
+    # If the form is valid
     if form.validate_on_submit():
-        # Get coordinates from the session
-        lat = session['coordinates']['lat']
-        lng = session['coordinates']['lng']
-        
-        coords = f"{lat},{lng}"
-        print(coords)
-        
+        # Get the coordinates from the session
+        coords = session['coordinates']
+        # Generate the recommendations
         recommendations = RecommendationGenerator.generate_recommendation(current_user.id, coords)
-        
+        # Render the find restaurants template with the recommendations
         return(render_template('find_restaurants.html', title='Find Restaurants', key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', form=form, api=True, recommendations=recommendations))
+    # Render the find restaurants template without recommendations if the form has not been submitted
     return(render_template('find_restaurants.html', title='Find Restaurants', key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', form=form, api=True))

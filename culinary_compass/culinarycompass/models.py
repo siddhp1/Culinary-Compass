@@ -55,7 +55,8 @@ class User(db.Model, UserMixin):
 
 # Define the Restaurant model
 class Restaurant(db.Model):
-    id = db.Column(db.String(200), primary_key=True)  # Restaurant ID, primary key
+    id = db.Column(db.String(24), primary_key=True)  # Restaurant ID, primary key
+    full_name = db.Column(db.String(200), nullable=False)  # Restaurant full name
     name = db.Column(db.String(100), nullable=False)  # Restaurant name
     address = db.Column(db.String(100), nullable=False)  # Restaurant address
     category = db.Column(db.Text, nullable=False) # Restaurant category

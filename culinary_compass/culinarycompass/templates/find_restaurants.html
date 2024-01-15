@@ -1,12 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="text-center">
-    <h1>Find Restaurants</h1>
-    <h4>Here are some recommendations based on the restaurants you like.</h4>
+    <h1 class="mb-3">Find Restaurants</h1>
+    <h4 class="mb-1">Generate some recommendations based on the restaurants you like.</h4>
+    <h5 class="mb-1">Start by choosing a location where you want to eat.</h5>
 
     <!-- Map container -->
-    <div id="map" style="height: 400px;"></div>
+    <div class="mb-2" id="map" style="height: 400px;"></div>
 
+    <!-- Form to submit the location -->
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <div class="form-group">
@@ -14,8 +16,10 @@
         </div>
     </form>
 
+    <!-- Display the recommendations if there are any -->
     {% if recommendations %}
-        <h4>recommendations here</h4>
+        <h4>Here are some restaurants that you may like.</h4>
+        
     {% endif %}
 <div>
 

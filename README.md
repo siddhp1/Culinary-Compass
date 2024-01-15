@@ -3,12 +3,14 @@ final project
 notes for now:
 
 pages that are done
+- layout
+
+
+- account
 - login
 - register
-- account
 - reset request
 - reset token
-- layout
 - add rest 
 
 pages that need to be worked on
@@ -18,5 +20,4 @@ pages that need to be worked on
 
 stuff to do
 - check that dietary restriction form is loading from db
-- make the report generator
 - implement recommendation generator

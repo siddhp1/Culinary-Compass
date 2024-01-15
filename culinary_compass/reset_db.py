@@ -9,3 +9,5 @@ with app.app_context():
     #     print(restaurant.name, restaurant.address, restaurant.date_visited, restaurant.rating)
 
     db.create_all()
+    
+## DELETE THIS FILE IN PRODUCTION

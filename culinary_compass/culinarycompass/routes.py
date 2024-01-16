@@ -243,8 +243,8 @@ def account():
     return(render_template('account.html',
                            title='Account',
                            image_file=image_file,
-                           form=update_account_form,
-                           profile_form=questionnaire_form,
+                           update_account_form=update_account_form,
+                           questionnaire_form=questionnaire_form,
                            report_form=report_form))
 
 # Reset password pages
@@ -563,6 +563,14 @@ def update_coordinates():
 @app.route("/find", methods=['GET', 'POST']) # GET and POST requests allowed for form submission
 @login_required # Login required to access the find restaurants page
 def find():
+    # Check if user has visited any restaurants
+    has_visited = RestaurantVisit.query.filter_by(user_id=current_user.id).first() is not None
+    # If user has not visited any restaurants
+    if not has_visited:
+        # Flash a warning message
+        flash('Please add restaurants to your history before generating recommendations.', 'danger')
+        return(redirect(url_for('my')))
+    
     # Initialize the recommendation form
     form = RecommendationForm()
     # Get the coordinates from the session

@@ -21,7 +21,7 @@
         <!-- Form for updating account information -->
         <form method="POST" action="" novalidate enctype="multipart/form-data">
             <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
-            {{ form.hidden_tag() }}
+            {{ update_account_form.hidden_tag() }}
             <!-- Start of a group of related form controls -->
             <fieldset class="form-group">
                 <!-- The title of the form group -->
@@ -30,24 +30,24 @@
                 <!-- Start of the username form control -->
                 <div class="form-group">
                     <!-- Display the label for the username field -->
-                    {{ form.username.label(class="form-control-label") }}
+                    {{ update_account_form.username.label(class="form-control-label") }}
                     
                     <!-- Check if there are any validation errors for the username field -->
-                    {% if form.username.errors %}
+                    {% if update_account_form.username.errors %}
                         <!-- If there are errors, apply the 'is-invalid' class to the input field -->
-                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        {{ update_account_form.username(class="form-control form-control-lg is-invalid") }}
                         
                         <!-- Start of the error messages display -->
                         <div class="invalid-feedback">
                             <!-- Loop through each error message -->
-                            {% for error in form.username.errors %}
+                            {% for error in update_account_form.username.errors %}
                                 <!-- Display the error message -->
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
                         <!-- If there are no errors, render the input field normally -->
-                        {{ form.username(class="form-control form-control-lg") }}
+                        {{ update_account_form.username(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
                 <!-- End of the username form control -->
@@ -55,24 +55,24 @@
                 <!-- Start of the email form control -->
                 <div class="form-group">
                     <!-- Display the label for the email field -->
-                    {{ form.email.label(class="form-control-label") }}
+                    {{ update_account_form.email.label(class="form-control-label") }}
                     
                     <!-- Check if there are any validation errors for the email field -->
-                    {% if form.email.errors %}
+                    {% if update_account_form.email.errors %}
                         <!-- If there are errors, apply the 'is-invalid' class to the input field -->
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        {{ update_account_form.email(class="form-control form-control-lg is-invalid") }}
                         
                         <!-- Start of the error messages display -->
                         <div class="invalid-feedback">
                             <!-- Loop through each error message -->
-                            {% for error in form.email.errors %}
+                            {% for error in update_account_form.email.errors %}
                                 <!-- Display the error message -->
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
                         <!-- If there are no errors, render the input field normally -->
-                        {{ form.email(class="form-control form-control-lg") }}
+                        {{ update_account_form.email(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
                 <!-- End of the email form control -->
@@ -80,15 +80,15 @@
                 <!-- Start of the picture form control -->
                 <div class="form-group">
                     <!-- Display the label for the picture field -->
-                    {{ form.picture.label() }}
+                    {{ update_account_form.picture.label() }}
                     
                     <!-- Render the file input field for the picture -->
-                    {{ form.picture(class="form-control-file") }}
+                    {{ update_account_form.picture(class="form-control-file") }}
                     
                     <!-- Check if there are any validation errors for the picture field -->
-                    {% if form.picture.errors %}
+                    {% if update_account_form.picture.errors %}
                         <!-- Loop through each error message -->
-                        {% for error in form.picture.errors %}
+                        {% for error in update_account_form.picture.errors %}
                             <!-- Display the error message with a red text color -->
                             <span class="text-danger">{{ error }}</span></br>
                         {% endfor %}
@@ -101,7 +101,7 @@
             <!-- Start of the form group for the submit button -->
             <div class="form-group">
                 <!-- Render the submit button -->
-                {{ form.submit(class="btn btn-outline-info") }}
+                {{ update_account_form.submit(class="btn btn-outline-info") }}
             </div>
             <!-- End of the form group -->
         </form>
@@ -109,7 +109,7 @@
         <!-- Start of the dietary profile form -->
         <form method="POST" action="" novalidate enctype="multipart/form-data">
             <!-- Generate a hidden CSRF token field -->
-            {{ profile_form.hidden_tag() }}
+            {{ questionnaire_form.hidden_tag() }}
             
             <!-- Start of a group of related form controls -->
             <fieldset class="form-group">
@@ -117,12 +117,12 @@
                 <legend class="border-bottom mb-4">Dietary Profile</legend>
                 
                 <!-- Loop through each choice in the vegetarianism field -->
-                {% for choice, label in profile_form.vegetarianism.choices %}
+                {% for choice, label in questionnaire_form.vegetarianism.choices %}
                     <!-- Start of the vegetarianism form control -->
                     <div class="form-check form-check-inline">
                         <!-- Render a radio input field for each choice -->
-                        <input class="form-check-input" type="radio" name="{{ profile_form.vegetarianism.name }}" 
-                            id="{{ choice }}" value="{{ choice }}" {% if profile_form.vegetarianism.data == choice %}checked{% endif %}>
+                        <input class="form-check-input" type="radio" name="{{ questionnaire_form.vegetarianism.name }}" 
+                            id="{{ choice }}" value="{{ choice }}" {% if questionnaire_form.vegetarianism.data == choice %}checked{% endif %}>
                         <!-- Display the label for the choice -->
                         <label class="form-check-label" for="{{ choice }}">{{ label }}</label>
                     </div>
@@ -132,7 +132,7 @@
                 <!-- Start of the gluten form control -->
                 <div class="form-check">
                     <!-- Render a checkbox input field for the gluten field -->
-                    <input class="form-check-input" type="checkbox" id="gluten" name="{{ profile_form.gluten.name }}" value="y" {% if profile_form.gluten.data %}checked{% endif %}>
+                    <input class="form-check-input" type="checkbox" id="gluten" name="{{ questionnaire_form.gluten.name }}" value="y" {% if questionnaire_form.gluten.data %}checked{% endif %}>
                     <!-- Display the label for the gluten field -->
                     <label class="form-check-label" for="gluten">
                     Gluten-Free?
@@ -143,7 +143,7 @@
                 <!-- Start of the healthy form control -->
                 <div class="form-check">
                     <!-- Render a checkbox input field for the healthy field -->
-                    <input class="form-check-input" type="checkbox" id="healthy" name="{{ profile_form.healthy.name }}" value="y" {% if profile_form.healthy.data %}checked{% endif %}>
+                    <input class="form-check-input" type="checkbox" id="healthy" name="{{ questionnaire_form.healthy.name }}" value="y" {% if questionnaire_form.healthy.data %}checked{% endif %}>
                     <!-- Display the label for the healthy field -->
                     <label class="form-check-label" for="healthy">
                     Healthy Foods?
@@ -154,7 +154,7 @@
                 <!-- Start of the no_alcohol form control -->
                 <div class="form-check">
                     <!-- Render a checkbox input field for the no_alcohol field -->
-                    <input class="form-check-input" type="checkbox" id="no_alcohol" name="{{ profile_form.no_alcohol.name }}" value="y" {% if profile_form.no_alcohol.data %}checked{% endif %}>
+                    <input class="form-check-input" type="checkbox" id="no_alcohol" name="{{ questionnaire_form.no_alcohol.name }}" value="y" {% if questionnaire_form.no_alcohol.data %}checked{% endif %}>
                     <!-- Display the label for the no_alcohol field -->
                     <label class="form-check-label" for="no_alcohol">
                     No Alcohol?
@@ -167,7 +167,7 @@
             <!-- Start of the submit button form control -->
             <div class="form-group">
                 <!-- Render the submit button -->
-                {{ profile_form.submit(class="btn btn-outline-info") }}
+                {{ questionnaire_form.submit(class="btn btn-outline-info") }}
             </div>
             <!-- End of the submit button form control -->
         </form>

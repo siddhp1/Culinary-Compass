@@ -106,8 +106,10 @@ class ReportGenerator:
                 .group_by(Restaurant.id, Restaurant.name) \
                 .order_by(func.count(RestaurantVisit.id).desc(), func.avg(RestaurantVisit.rating).desc()) \
                 .first()
-            # Extract the name of the restaurant from the tuple
+                
+            # If there is a most visited restaurant
             if most_visited_restaurant_name is not None:
+                # Get the name of the most visited restaurant
                 most_visited_restaurant_name = most_visited_restaurant_name[0]
                 # Draw the most visited restaurant on the PDF
                 ReportGenerator.draw_text(pdf_canvas, f"{most_visited_restaurant_name} was your favourite restaurant.", 24, (68, 68, 68), 220)

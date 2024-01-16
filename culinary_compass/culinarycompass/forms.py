@@ -84,18 +84,18 @@ class UpdateAccountForm(FlaskForm):
 
 # questionnaire form for dietary preferences
 class QuestionnaireForm(FlaskForm):
-    # Options for dietary preferences
+    # Options for vegetarianism
     choices = [('vegan', 'Vegan'), ('vegetarian', 'Vegetarian'), ('neither', 'Neither')]
     # Radio field for dietary preferences
-    dietary_preference = RadioField('Dietary Preference', choices=choices)
+    vegetarianism = RadioField('Vegetarian/Veganism', choices=choices)
     # Boolean field for gluten-free
     gluten = BooleanField('Gluten-Free')
-    # Boolean field for allergies
-    allergies = BooleanField('Allergies')
+    # Boolean field for healthy foods
+    healthy = BooleanField('Healthy Foods')
     # Boolean field for alcohol
-    alcohol = BooleanField('Alcohol')
+    no_alcohol = BooleanField('No Alcohol')
     # Submit field for submitting the form
-    submit = SubmitField('Submit')
+    submit = SubmitField('Update')
 
 # Request password reset form
 class RequestResetForm(FlaskForm):

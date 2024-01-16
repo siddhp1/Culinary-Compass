@@ -45,3 +45,9 @@ app.config['MAIL_USERNAME'] = os.environ.get('DEV_EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('DEV_EMAIL_PASS')
 # Initialize Mail for sending password reset emails
 mail = Mail(app)
+
+# API Keys
+# Google Maps API key
+google = 'AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc'
+# Foursquare API key
+foursquare = 'fsq3891kysJBh536fngR4yL2X7D8lqkaNSF8vzQTtQNZqs0='

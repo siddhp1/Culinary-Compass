@@ -8,47 +8,63 @@ body {
     color: #333333;
 }
 
+/* Set font size and weight for h1 */
 h1 {
     font-size: 3rem;
     font-weight: 500;
 }
 
+/* Set font size and weight for h2 */
 h2 {
     font-size: 2.5rem;
     font-weight: 500;
 }
 
+/* Reset padding and margin and set text colour */
 h1, h2, h3, h4, h5, h6, p{
     padding: 0;
     margin: 0;
     color: #444444;
 }
 
+/* Reset ul margin */
 ul {
     margin: 0;
 }
 
+/* Set margin-top for non-home pages */
 #other {
     margin-top: 5rem;
 }
 
+/* Custom class for aligning items to center of div */
+.align-middle {
+    display: flex;
+    align-items: center;
+}
+
 /* Navigation bar styles */
+/* Set background color for navbar */
 .bg-steel {
     background-color: #e85d04;
 }
 
+/* Set font colour for navbar */
 .site-header .navbar-nav .nav-link {
     color: #ffffff;
 }
 
+/* Set font colour for navbar links on hover */
 .site-header .navbar-nav .nav-link:hover {
     color: #cbd5db;
 }
 
+/* Set font weight for navbar */
 .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
 }
 
+/* Set background color, padding, border, and margin for content-sections */
 .content-section {
     background: #ffffff;
     padding: 10px 20px;
@@ -57,12 +73,8 @@ ul {
     margin-bottom: 20px;
 }
 
-.align-middle {
-    display: flex;
-    align-items: center;
-}
-
-/* Account images */
+/* Image styles */
+/* Set dimensions and margin for profile image */
 .account-img {
     height: 125px;
     width: 125px;
@@ -71,12 +83,14 @@ ul {
     object-fit:cover;
 }
 
+/* Set dimensions and border radius for tutorial images */
 .tutorial-img {
     height: 380px;
     width: auto;
     border-radius: 10px;
 }
 
+/* Set dimensions and margin for navbar account image */
 .nav-account-image {
     height: 30px;
     width: 30px;
@@ -84,41 +98,50 @@ ul {
     object-fit:cover;
 }
 
+/* Account page */
+/* Set font color and size for account page title */
 .account-heading {
     color: #444444;
     font-size: 2.5rem;
 }
 
 /* Home Page */
+/* Reset container fluid padding */
 .container-fluid {
     padding: 0;
 }
 
+/* Set container section padding */
 .container-section {
     padding: 25px;
 }
 
+/* Set font size for home page header */
 .header-home {
     font-size: 10rem;
 }
 
+/* Set dimensions for home page logo */
 .logo-img {
     height: 40vh;
     width: 40vh;
     object-fit:cover;
 }
 
+/* Set background color, text colour, and height of landing section */
 #landing {
     background-color: #FAA307;
     color: #444444;
     height: 100vh;
 }
 
+/* Set background color and height of about section */
 #about {
     background-color: #F48C06;
     height: 68vh;
 }
 
+/* Set background color and tutorial of background section */
 #tutorial {
     background-color: #FAA307;
     height: 70vh;

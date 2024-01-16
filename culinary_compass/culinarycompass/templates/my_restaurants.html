@@ -1,61 +1,100 @@
+<!-- Extends the base layout defined in "layout.html" -->
 {% extends "layout.html" %}
+<!-- Defines the content block that will be inserted into the base layout -->
 {% block content %}
-<div class="text-center">
-    <h1 class="mb-3">My Restaurants</h1>
-    <h5 class="mb-1">Visited a restaurant recently?</h5>
-    <a href="{{ url_for('add') }}" class="btn btn-info mb-3">Add Restaurant</a>
-
-    <form class="form-inline mb-3" method="GET" action="{{ url_for('my') }}">
-        <div class="input-group">
-            <input type="text" class="form-control" name="q" placeholder="Search for restaurants" value="{{ search_query }}">
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-secondary">Search</button>
-                {% if search_query %}
-                    <a href="{{ url_for('my') }}" class="btn btn-outline-secondary">Clear</a>
-                    <div class="align-middle">
-                        <h6 class="ml-3">Searching for restaurant visits with keywords: {{ search_query }} ({{ restaurant_visits.total }})</h6>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </form>
-
-    {% for restaurant_visit in restaurant_visits.items %}
-        <div class="card mt-3">
-            <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    {% if restaurant_visit.restaurant.website %}
-                        <h2 class="card-title"><a href="{{ restaurant_visit.restaurant.website }}">{{ restaurant_visit.restaurant.name }}</a></h2>
-                    {% else %}
-                        <h2 class="card-title">{{ restaurant_visit.restaurant.name }}</h2>
+    <!-- A div for centering text -->
+    <div class="text-center">
+        <!-- The title for the page -->
+        <h1 class="mb-3">My Restaurants</h1>
+        <!-- A subheading -->
+        <h5 class="mb-1">Visited a restaurant recently?</h5>
+        <!-- A link to add a restaurant -->
+        <a href="{{ url_for('add') }}" class="btn btn-info mb-3">Add Restaurant</a>
+        <!-- A form for searching restaurants -->
+        <form class="form-inline mb-3" method="GET" action="{{ url_for('my') }}">
+            <!-- A group for the search input -->
+            <div class="input-group">
+                <!-- The search input -->
+                <input type="text" class="form-control" name="q" placeholder="Search for restaurants" value="{{ search_query }}">
+                <!-- A group for the search button and clear button -->
+                <div class="input-group-append">
+                    <!-- The search button -->
+                    <button type="submit" class="btn btn-secondary">Search</button>
+                    <!-- If there is a search query, display the clear button and the search results -->
+                    {% if search_query %}
+                        <!-- The clear button -->
+                        <a href="{{ url_for('my') }}" class="btn btn-outline-secondary">Clear</a>
+                        <!-- A container for the search results -->
+                        <div class="align-middle">
+                            <!-- The search results -->
+                            <h6 class="ml-3">Searching for restaurant visits with keywords: {{ search_query }} ({{ restaurant_visits.total }})</h6>
+                        </div>
                     {% endif %}
-                    <p>{{ restaurant_visit.restaurant.address }}</p>
-                </div>
-                <div class="col-md-6 d-flex flex-column justify-content-center">
-                    <p><strong>Visited On: </strong>{{ restaurant_visit.date_visited.strftime('%Y-%m-%d') }}</p>
-                    <p><strong>Your Visit Rating: </strong>{{ restaurant_visit.rating }}/5</p>
-                    <p><strong>Categories: </strong>
-                        {% for category in restaurant_visit.restaurant.category.split(',') %}
-                            {{ category.split(':')[0] }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    </p>
                 </div>
             </div>
+        </form>
+
+        <!-- Loop through each restaurant visit and display it -->
+        {% for restaurant_visit in restaurant_visits.items %}
+            <!-- A card for the restaurant visit -->
+            <div class="card mt-3">
+                <!-- The body of the card -->
+                <div class="card-body">
+                    <!-- A row for the restaurant details and visit details -->
+                    <div class="row">
+                        <!-- A column for the restaurant details -->
+                        <div class="col-md-6">
+                            <!-- If the restaurant has a website, display the name as a link -->
+                            {% if restaurant_visit.restaurant.website %}
+                                <!-- The restaurant name as a link -->
+                                <h2 class="card-title"><a class="text-info" href="{{ restaurant_visit.restaurant.website }}">{{ restaurant_visit.restaurant.name }}</a></h2>
+                            <!-- If the restaurant does not have a website, display the name normally -->
+                            {% else %}
+                                <!-- The restaurant name -->
+                                <h2 class="card-title">{{ restaurant_visit.restaurant.name }}</h2>
+                            {% endif %}
+                            <!-- The restaurant address -->
+                            <p>{{ restaurant_visit.restaurant.address }}</p>
+                        </div>
+
+                        <!-- A column for the visit details -->
+                        <div class="col-md-6 d-flex flex-column justify-content-center">
+                            <!-- The visit date -->
+                            <p><strong>Visited On: </strong>{{ restaurant_visit.date_visited.strftime('%Y-%m-%d') }}</p>
+                            <!-- The visit rating -->
+                            <p><strong>Your Visit Rating: </strong>{{ restaurant_visit.rating }}/5</p>
+                            <!-- The restaurant categories -->
+                            <p><strong>Categories: </strong>
+                                <!-- Loop through each category and display it -->
+                                {% for category in restaurant_visit.restaurant.category.split(',') %}
+                                    <!-- The category -->
+                                    {{ category.split(':')[0] }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    {% endfor %}
-    
-    {% for page_num in restaurant_visits.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
-      {% if page_num %}
-        {% if restaurant_visits.page == page_num %}
-          <a class="btn btn-info mt-2 mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
-        {% else %}
-          <a class="btn btn-outline-info mt-2 mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
-        {% endif %}
-      {% else %}
-        ...
-      {% endif %}
-    {% endfor %}
-</div>
+        {% endfor %}
+
+        <!-- Loop through each page number and display it -->
+        {% for page_num in restaurant_visits.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+            <!-- If the page number exists -->
+            {% if page_num %}
+                <!-- If the current page is the page number, display it as active -->
+                {% if restaurant_visits.page == page_num %}
+                    <!-- The active page number -->
+                    <a class="btn btn-info mt-2 mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
+                <!-- If the current page is not the page number, display it as inactive -->
+                {% else %}
+                    <!-- The inactive page number -->
+                    <a class="btn btn-outline-info mt-2 mb-4" href="{{ url_for('my', page=page_num, q=search_query) }}">{{ page_num }}</a>
+                {% endif %}
+            <!-- If the page number does not exist, display an ellipsis -->
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+    </div>
+<!-- Ends the content block -->
 {% endblock content %}

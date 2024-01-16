@@ -21,10 +21,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)  # User's email
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')  # Profile image file
     password = db.Column(db.String(60), nullable=False)  # User's hashed password
-    dietary_preference = db.Column(db.String(20), default='neither')  # User's dietary preference
+    vegetarianism = db.Column(db.String(20), default='neither')  # User's dietary preference
     gluten = db.Column(db.Boolean, default=False)  # User's gluten preference
-    allergies = db.Column(db.Boolean, default=False)  # User's allergies preference
-    alcohol = db.Column(db.Boolean, default=False)  # User's alcohol preference
+    healthy = db.Column(db.Boolean, default=False)  # User's allergies preference
+    no_alcohol = db.Column(db.Boolean, default=False)  # User's alcohol preference
     restaurant_visits = db.relationship('RestaurantVisit', backref='user', lazy=True) # User's visits to restaurants (relationship)
 
     # Generate a password reset token
@@ -117,6 +117,45 @@ class RestaurantFeature(db.Model):
     value_for_money = db.Column(db.String(200)) # If the restaurant is good value for money
     vegan_diet = db.Column(db.String(200)) # If the restaurant has vegan options
     vegetarian_diet = db.Column(db.String(200)) # If the restaurant has vegetarian options
+    
+    def get_all_data(self):
+        return {
+            'bar_service': self.bar_service,
+            'beer': self.beer,
+            'byo': self.byo,
+            'cocktails': self.cocktails,
+            'full_bar': self.full_bar,
+            'wine': self.wine,
+            'bar_snacks': self.bar_snacks,
+            'breakfast': self.breakfast,
+            'brunch': self.brunch,
+            'lunch': self.lunch,
+            'happy_hour': self.happy_hour,
+            'dessert': self.dessert,
+            'dinner': self.dinner,
+            'tasting_menu': self.tasting_menu,
+            'business_meeting': self.business_meeting,
+            'clean': self.clean,
+            'crowded': self.crowded,
+            'dates_popular': self.dates_popular,
+            'dressy': self.dressy,
+            'families_popular': self.families_popular,
+            'gluten_free_diet': self.gluten_free_diet,
+            'good_for_dogs': self.good_for_dogs,
+            'groups_popular': self.groups_popular,
+            'healthy_diet': self.healthy_diet,
+            'late_night': self.late_night,
+            'noisy': self.noisy,
+            'quick_bite': self.quick_bite,
+            'romantic': self.romantic,
+            'service_quality': self.service_quality,
+            'singles_popular': self.singles_popular,
+            'special_occasion': self.special_occasion,
+            'trendy': self.trendy,
+            'value_for_money': self.value_for_money,
+            'vegan_diet': self.vegan_diet,
+            'vegetarian_diet': self.vegetarian_diet,
+        }
 
 # Define the RestaurantVisit model
 class RestaurantVisit(db.Model):

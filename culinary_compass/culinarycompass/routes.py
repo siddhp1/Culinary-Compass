@@ -15,7 +15,7 @@ from flask_mail import Message
 # Import or_ from SQLAlchemy for filtering queries
 from sqlalchemy import or_
 # Import the app, db, bcrypt, and mail from the __init__.py file
-from culinarycompass import app, db, bcrypt, mail
+from culinarycompass import app, db, bcrypt, mail, google, foursquare
 # Import the forms from the forms.py file
 from culinarycompass.forms import (RegistrationForm,
                                    LoginForm,
@@ -197,13 +197,13 @@ def account():
     # If the form is valid
     if questionnaire_form.validate_on_submit():
         # Update the user's dietary preference
-        current_user.dietary_preference = questionnaire_form.dietary_preference.data
+        current_user.vegetarianism = questionnaire_form.vegetarianism.data
         # Update the user's gluten preference
         current_user.gluten = questionnaire_form.gluten.data
         # Update the user's allergies
-        current_user.allergies = questionnaire_form.allergies.data
+        current_user.healthy = questionnaire_form.healthy.data
         # Update the user's alcohol preference
-        current_user.alcohol = questionnaire_form.alcohol.data
+        current_user.no_alcohol = questionnaire_form.no_alcohol.data
         # Commit the changes to the database
         db.session.commit()
         # Flash a success message
@@ -213,13 +213,13 @@ def account():
     # If the request method is GET (when loading the page)
     elif request.method == 'GET':
         # Set the dietary preference field to the current user's dietary preference
-        questionnaire_form.dietary_preference.data = current_user.dietary_preference
+        questionnaire_form.vegetarianism.data = current_user.vegetarianism
         # Set the gluten field to the current user's gluten preference
         questionnaire_form.gluten.data = current_user.gluten
         # Set the allergies field to the current user's allergies
-        questionnaire_form.allergies.data = current_user.allergies
+        questionnaire_form.healthy.data = current_user.healthy
         # Set the alcohol field to the current user's alcohol preference
-        questionnaire_form.alcohol.data = current_user.alcohol
+        questionnaire_form.no_alcohol.data = current_user.no_alcohol
     
     # Initialize the report form
     report_form = ReportForm()
@@ -353,7 +353,7 @@ def add():
             # MAKE AN APP/ENVIRONMENT VARIABLE
             headers = {
                 "accept": "application/json",
-                "Authorization": "fsq3891kysJBh536fngR4yL2X7D8lqkaNSF8vzQTtQNZqs0="
+                "Authorization": foursquare
             }
             
             # Make the API request and store the response
@@ -368,15 +368,17 @@ def add():
                 
                 # Extract the restaurant id from the response in a session variable
                 fsq_id = parsed_data['place']['fsq_id']
+                # Store the restaurant id in the session
                 session['fsq_id'] = fsq_id  
-                 
+                
                 # Extract the category information
                 categories = [f"{category['short_name']}:{category['id']}" for category in parsed_data['place']['categories']]
                 # Store the categories as a comma-separated string
                 categories_str = ",".join(categories) 
-
-                # Use .get() to fetch the information, if not available it will return None
+                
+                # Extract the menu information
                 menu = parsed_data['place'].get('menu')
+                # Extract the website information
                 website = parsed_data['place'].get('website')
 
                 # Check if restaurant tastes information is available
@@ -384,9 +386,10 @@ def add():
                 # If tastes is not None, store the tastes as a comma-separated string
                 tastes_str = ",".join(tastes) if tastes else None
 
+                # Extract the description information
                 description = parsed_data['place'].get('description')
+                # Extract the price information
                 price = parsed_data['place'].get('price')
-
                 # Get the address from the response
                 address = parsed_data['place']['location']['formatted_address']
 
@@ -507,7 +510,7 @@ def add():
         # Redirect user to my restaurants page
         return(redirect(url_for('my')))
     # Render the add restaurant template
-    return render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', api=True)
+    return render_template('add_restaurant.html', title='Add Restaurant', search_form=search_form, key=google, api=True)
 
 # My restaurants page
 # My URL directs to the my restaurants page
@@ -562,13 +565,16 @@ def update_coordinates():
 def find():
     # Initialize the recommendation form
     form = RecommendationForm()
+    # Get the coordinates from the session
+    coords = session.get('coordinates', None)
+    
     # If the form is valid
     if form.validate_on_submit():
-        # Get the coordinates from the session
-        coords = session['coordinates']
         # Generate the recommendations
-        recommendations = RecommendationGenerator.generate_recommendation(current_user.id, coords)
+        recommended_ids = RecommendationGenerator.generate_recommendation(current_user.id, coords)
+        # Get the recommended restaurants from the database        
+        recommendations = [Restaurant.query.get(id) for id in recommended_ids]
         # Render the find restaurants template with the recommendations
-        return(render_template('find_restaurants.html', title='Find Restaurants', key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', form=form, api=True, recommendations=recommendations))
+        return(render_template('find_restaurants.html', title='Find Restaurants', key=google, form=form, api=True, recommendations=recommendations))
     # Render the find restaurants template without recommendations if the form has not been submitted
-    return(render_template('find_restaurants.html', title='Find Restaurants', key='AIzaSyC9tZs8iF_dWZKbJtwFF3uBrle944RYtHc', form=form, api=True))
+    return(render_template('find_restaurants.html', title='Find Restaurants', key=google, form=form, api=True))

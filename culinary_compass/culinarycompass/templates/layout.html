@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- Required meta tags -->
+        <!-- Required meta tags for responsive web design-->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -34,6 +34,7 @@
                 <div class="container">
                     <!-- Link to the home page -->
                     <a class="navbar-brand mr-4" href="{{ url_for('home') }}">
+                        <!-- Logo image -->
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="nav-account-image rounded-circle">
                         Culinary Compass
                     </a>
@@ -68,32 +69,44 @@
                                 <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                             {% endif %}
                         </div>
+                        <!-- End of navigation links -->
                     </div>
+                    <!-- End of navbar -->
                 </div>
+                <!-- End of navbar container -->
             </nav>
+            <!-- End of navigation section -->
         </header>
+        <!-- End of header section -->
 
         <!-- Start of the main content section -->
         <main role="main" class="container" id="other">
+            <!-- Create a row for the elements-->
             <div class="row">
                 <!-- Set width of container to be wider if on find or my restaurants page -->
                 <div class="{% if title in ['Find Restaurants', 'My Restaurants'] %}col-md-10{% else %}col-md-8{% endif %} mx-auto">
                     <!-- Start of the flash messages section -->
                     {% with messages = get_flashed_messages(with_categories=true) %}
+                        <!-- If there are messages -->
                         {% if messages %}
+                            <!-- Iterate through the messages -->
                             {% for category, message in messages %}
-                            <!-- Display of the flash messages -->
-                            <div class="alert alert-{{ category }}">
-                                {{ message }}
-                            </div>
+                                <!-- Display the flash messages -->
+                                <div class="alert alert-{{ category }}">
+                                    <!-- Message -->
+                                    {{ message }}
+                                </div>
                             {% endfor %}
                         {% endif %}
                     {% endwith %}
                     <!-- Placeholder for the content of the child templates -->
                     {% block content %}{% endblock %}
                 </div>
+                <!-- End of the container -->
             </div>
+            <!-- End of the row -->
         </main>
+        <!-- End of the main section -->
 
         <!-- Start of the optional JavaScript files -->
         <!-- jQuery library -->

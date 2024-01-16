@@ -1,97 +1,194 @@
+<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
 {% extends "layout.html" %}
+<!-- Elements unique to the account page will be placed inside the content block -->
 {% block content %}
+    <!-- Content section (bootstrap class) -->
     <div class="content-section">
+        <!-- Bootstrap class for the container -->
         <div class="media">
-        <img class="rounded-circle account-img" src={{ image_file }}>
-        <div class="media-body">
-            <h2 class="account-heading">{{ current_user.username }}</h2>
-            <p class="text-secondary">{{ current_user.email }}</p>
-            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+            <!-- Profile image -->
+            <img class="rounded-circle account-img" src={{ image_file }}>
+            <!-- Media body class for the text -->
+            <div class="media-body">
+                <!-- Account username-->
+                <h2 class="account-heading">{{ current_user.username }}</h2>
+                <!-- Account email -->
+                <p class="text-secondary mb-2">{{ current_user.email }}</p>
+                <!-- Logout button -->
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+            </div>
         </div>
-        </div>
+        <!-- Form for updating account information -->
         <form method="POST" action="" novalidate enctype="multipart/form-data">
+            <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
             {{ form.hidden_tag() }}
+            <!-- Start of a group of related form controls -->
             <fieldset class="form-group">
+                <!-- The title of the form group -->
                 <legend class="border-bottom mb-4">Account Information</legend>
+                
+                <!-- Start of the username form control -->
                 <div class="form-group">
+                    <!-- Display the label for the username field -->
                     {{ form.username.label(class="form-control-label") }}
+                    
+                    <!-- Check if there are any validation errors for the username field -->
                     {% if form.username.errors %}
+                        <!-- If there are errors, apply the 'is-invalid' class to the input field -->
                         {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        
+                        <!-- Start of the error messages display -->
                         <div class="invalid-feedback">
+                            <!-- Loop through each error message -->
                             {% for error in form.username.errors %}
+                                <!-- Display the error message -->
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
+                        <!-- If there are no errors, render the input field normally -->
                         {{ form.username(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <!-- End of the username form control -->
+                
+                <!-- Start of the email form control -->
                 <div class="form-group">
+                    <!-- Display the label for the email field -->
                     {{ form.email.label(class="form-control-label") }}
+                    
+                    <!-- Check if there are any validation errors for the email field -->
                     {% if form.email.errors %}
+                        <!-- If there are errors, apply the 'is-invalid' class to the input field -->
                         {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        
+                        <!-- Start of the error messages display -->
                         <div class="invalid-feedback">
+                            <!-- Loop through each error message -->
                             {% for error in form.email.errors %}
+                                <!-- Display the error message -->
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
+                        <!-- If there are no errors, render the input field normally -->
                         {{ form.email(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <!-- End of the email form control -->
+                
+                <!-- Start of the picture form control -->
                 <div class="form-group">
+                    <!-- Display the label for the picture field -->
                     {{ form.picture.label() }}
+                    
+                    <!-- Render the file input field for the picture -->
                     {{ form.picture(class="form-control-file") }}
+                    
+                    <!-- Check if there are any validation errors for the picture field -->
                     {% if form.picture.errors %}
+                        <!-- Loop through each error message -->
                         {% for error in form.picture.errors %}
+                            <!-- Display the error message with a red text color -->
                             <span class="text-danger">{{ error }}</span></br>
                         {% endfor %}
                     {% endif %}
+                </div>
+                <!-- End of the picture form control -->
             </fieldset>
+            <!-- End of the form group -->
+
+            <!-- Start of the form group for the submit button -->
             <div class="form-group">
+                <!-- Render the submit button -->
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
+            <!-- End of the form group -->
         </form>
+
+        <!-- Start of the dietary profile form -->
         <form method="POST" action="" novalidate enctype="multipart/form-data">
+            <!-- Generate a hidden CSRF token field -->
             {{ profile_form.hidden_tag() }}
+            
+            <!-- Start of a group of related form controls -->
             <fieldset class="form-group">
+                <!-- The title of the form group -->
                 <legend class="border-bottom mb-4">Dietary Profile</legend>
-                {% for choice, label in profile_form.dietary_preference.choices %}
+                
+                <!-- Loop through each choice in the vegetarianism field -->
+                {% for choice, label in profile_form.vegetarianism.choices %}
+                    <!-- Start of the vegetarianism form control -->
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{ profile_form.dietary_preference.name }}" 
-                            id="{{ choice }}" value="{{ choice }}" {% if profile_form.dietary_preference.data == choice %}checked{% endif %}>
+                        <!-- Render a radio input field for each choice -->
+                        <input class="form-check-input" type="radio" name="{{ profile_form.vegetarianism.name }}" 
+                            id="{{ choice }}" value="{{ choice }}" {% if profile_form.vegetarianism.data == choice %}checked{% endif %}>
+                        <!-- Display the label for the choice -->
                         <label class="form-check-label" for="{{ choice }}">{{ label }}</label>
                     </div>
+                    <!-- End of the vegetarianism form control -->
                 {% endfor %}
+                
+                <!-- Start of the gluten form control -->
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="">
-                    <label class="form-check-label" for="defaultCheck2">
+                    <!-- Render a checkbox input field for the gluten field -->
+                    <input class="form-check-input" type="checkbox" id="gluten" name="{{ profile_form.gluten.name }}" value="y" {% if profile_form.gluten.data %}checked{% endif %}>
+                    <!-- Display the label for the gluten field -->
+                    <label class="form-check-label" for="gluten">
                     Gluten-Free?
                     </label>
                 </div>
+                <!-- End of the gluten form control -->
+                
+                <!-- Start of the healthy form control -->
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="">
-                    <label class="form-check-label" for="defaultCheck2">
-                    Allergies
+                    <!-- Render a checkbox input field for the healthy field -->
+                    <input class="form-check-input" type="checkbox" id="healthy" name="{{ profile_form.healthy.name }}" value="y" {% if profile_form.healthy.data %}checked{% endif %}>
+                    <!-- Display the label for the healthy field -->
+                    <label class="form-check-label" for="healthy">
+                    Healthy Foods?
                     </label>
                 </div>
+                <!-- End of the healthy form control -->
+                
+                <!-- Start of the no_alcohol form control -->
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="">
-                    <label class="form-check-label" for="defaultCheck2">
-                    Alcohol
+                    <!-- Render a checkbox input field for the no_alcohol field -->
+                    <input class="form-check-input" type="checkbox" id="no_alcohol" name="{{ profile_form.no_alcohol.name }}" value="y" {% if profile_form.no_alcohol.data %}checked{% endif %}>
+                    <!-- Display the label for the no_alcohol field -->
+                    <label class="form-check-label" for="no_alcohol">
+                    No Alcohol?
                     </label>
                 </div>
+                <!-- End of the no_alcohol form control -->
             </fieldset>
+            <!-- End of the form group -->
+            
+            <!-- Start of the submit button form control -->
             <div class="form-group">
+                <!-- Render the submit button -->
                 {{ profile_form.submit(class="btn btn-outline-info") }}
             </div>
+            <!-- End of the submit button form control -->
         </form>
+        <!-- End of the dietary profile form -->
+
+        <!-- Start of the culinary map form -->
         <form method="POST" action="" novalidate enctype="multipart/form-data">
+            <!-- Generate a hidden CSRF token field -->
             {{ report_form.hidden_tag() }}
+            
+            <!-- The title of the form -->
             <legend class="border-bottom mb-4">Your Culinary Mapped</legend>
+            
+            <!-- Start of the submit button form control -->
             <div class="form-group">
+                <!-- Render the submit button -->
                 {{ report_form.submit(class="btn btn-outline-info") }}
             </div>
+            <!-- End of the submit button form control -->
         </form>
+        <!-- End of the culinary map form -->
     </div>
+    <!-- End of the content section -->
 {% endblock content %}

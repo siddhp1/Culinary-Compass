@@ -1,40 +1,64 @@
+<!-- Extends the base layout defined in "layout.html" -->
 {% extends "layout.html" %}
+<!-- Defines the content block that will be inserted into the base layout -->
 {% block content %}
+    <!-- Starts a section for the content -->
     <div class="content-section">
+        <!-- Form for resetting the password, method is POST -->
         <form method="POST" action="">
+            <!-- Generates a hidden tag for the form -->
             {{ form.hidden_tag() }}
+            <!-- Starts a group for grouping related elements in the form -->
             <fieldset class="form-group">
+                <!-- Title for the reset password form -->
                 <legend class="border-bottom mb-4">Reset Password</legend>
+                <!-- Starts a group for the password field -->
                 <div class="form-group">
+                    <!-- Generates the label for the password field -->
                     {{ form.password.label(class="form-control-label") }}
+                    <!-- Checks if there are errors for the password field -->
                     {% if form.password.errors %}
+                        <!-- Generates the password input field with error styling -->
                         {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        <!-- Starts a container for the error messages -->
                         <div class="invalid-feedback">
+                            <!-- Goes through each error message and displays it -->
                             {% for error in form.password.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
+                    <!-- If there are no errors, display the password field normally -->
                     {% else %}
                         {{ form.password(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <!-- Starts a group for the confirm password field -->
                 <div class="form-group">
+                    <!-- Generates the label for the confirm password field -->
                     {{ form.confirm_password.label(class="form-control-label") }}
+                    <!-- Checks if there are errors for the confirm password field -->
                     {% if form.confirm_password.errors %}
+                        <!-- Generates the confirm password input field with error styling -->
                         {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                        <!-- Starts a container for the error messages -->
                         <div class="invalid-feedback">
+                            <!-- Goes through each error message and displays it -->
                             {% for error in form.confirm_password.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
+                    <!-- If there are no errors, display the confirm password field normally -->
                     {% else %}
                         {{ form.confirm_password(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
             </fieldset>
+            <!-- Starts a group for the submit button -->
             <div class="form-group">
+                <!-- Generates the submit button for the form -->
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
     </div>
+<!-- Ends the content block -->
 {% endblock content %}

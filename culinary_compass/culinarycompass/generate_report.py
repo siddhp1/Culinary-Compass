@@ -138,44 +138,48 @@ class ReportGenerator:
                     first_category_name = all_categories[0].split(':')[0].strip("'\"")  # Extract the name from the first category
                     # Append the name to the list
                     categories.append(first_category_name)
+                
+            # If there are categories
+            if categories:
+                # Count the number of occurrences of each category
+                category_counts = Counter(categories)
+                # Get the top 5 most common categories
+                top_categories = category_counts.most_common(5)
+                # Extract names and frequencies for plotting
+                categories, frequencies = zip(*top_categories)
 
-            # Count the number of occurrences of each category
-            category_counts = Counter(categories)
-            # Get the top 5 most common categories
-            top_categories = category_counts.most_common(5)
-            # Extract names and frequencies for plotting
-            categories, frequencies = zip(*top_categories)
+                # Create a bar graph for the top 5 categories
+                # Set the data and colours
+                plt.bar(categories, frequencies, color=(244/255, 140/255, 6/255))
+                # Get y-axis label
+                plt.ylabel('Number of Visits')
+                # Set x-axis label rotation and alignment
+                plt.xticks(rotation=0, ha='center')
+                # Set y-axis scale to integers
+                plt.yticks(range(max(frequencies) + 1))
+                # Set the layout to tight (reduced padding between elements)
+                plt.tight_layout()
 
-            # Create a bar graph for the top 5 categories
-            # Set the data and colours
-            plt.bar(categories, frequencies, color=(244/255, 140/255, 6/255))
-            # Get y-axis label
-            plt.ylabel('Number of Visits')
-            # Set x-axis label rotation and alignment
-            plt.xticks(rotation=45, ha='right')
-            # Set y-axis scale to integers
-            plt.yticks(range(max(frequencies) + 1))
-            # Set the layout to tight (reduced padding between elements)
-            plt.tight_layout()
+                # Save the plot as an image
+                # Generate a random hex string for the image name
+                random_hex = secrets.token_hex(8)
+                # Get the image path
+                image_path = os.path.join(app.root_path, f'static/reports/{random_hex}.png')
+                # Save the plot as an image
+                plt.savefig(image_path, format='png')
+                # Clear the plot
+                plt.clf()
 
-            # Save the plot as an image
-            # Generate a random hex string for the image name
-            random_hex = secrets.token_hex(8)
-            # Get the image path
-            image_path = os.path.join(app.root_path, f'static/reports/{random_hex}.png')
-            # Save the plot as an image
-            plt.savefig(image_path, format='png')
-            # Clear the plot
-            plt.clf()
-
-            # Draw the image on the PDF
-            pdf_canvas.drawImage(image_path, x=50, y=265, width=500, height=250)
-            # Remove the image from the static folder
-            os.remove(os.path.join(app.root_path, f'static/reports/{random_hex}.png'))
-            
-            # Section 3 of the report
-            # Draw the subheading for section 3 of the report 
-            ReportGenerator.draw_text(pdf_canvas, f"Your Culinary Habits", 32, (232, 93, 4), 560)
+                # Get dimensions of the page
+                page_width, _ = letter
+                # Draw the image on the PDF
+                pdf_canvas.drawImage(image_path, x=(page_width - 400) / 2 - 10, y=265, width=400, height=250)
+                # Remove the image from the static folder
+                os.remove(os.path.join(app.root_path, f'static/reports/{random_hex}.png'))
+                
+                # Section 3 of the report
+                # Draw the subheading for section 3 of the report 
+                ReportGenerator.draw_text(pdf_canvas, f"Your Culinary Habits", 32, (232, 93, 4), 560)
             
             # Query for all restaurant visits of the user in the current year
             user_restaurant_visits = RestaurantVisit.query \
@@ -246,26 +250,29 @@ class ReportGenerator:
                 .filter_by(user_id=user_data.id) \
                 .filter(extract('year', RestaurantVisit.date_visited) == current_year) \
                 .all()
-
+                
             # Extract the price category for each visit
             price_categories = [visit.restaurant.price for visit in user_restaurant_visits]
-            # Find the most common price category
-            most_common_price_category = max(set(price_categories), key=price_categories.count)
-    
-            # Mapping for price categories to symbols
-            price_mapping = {
-                1: '$',
-                2: '$$',
-                3: '$$$',
-                4: '$$$$'
-            }
-            # Map the most common price category to its symbol
-            most_common_price_symbol = price_mapping.get(most_common_price_category, 'Unknown')
             
-            # Draw the most common price category on the PDF
-            ReportGenerator.draw_text(pdf_canvas, f"{most_common_price_symbol}", 100, (68, 68, 68), 680, 420)
-            # Draw the caption for the most common price category on the PDF
-            ReportGenerator.draw_text(pdf_canvas, f"Your Favourite Price Category", 18, (68, 68, 68), 720, 420)
+            # If there are price categories
+            if price_categories:
+                # Find the most common price category
+                most_common_price_category = max(set(price_categories), key=price_categories.count)
+        
+                # Mapping for price categories to symbols
+                price_mapping = {
+                    1: '$',
+                    2: '$$',
+                    3: '$$$',
+                    4: '$$$$'
+                }
+                # Map the most common price category to its symbol
+                most_common_price_symbol = price_mapping.get(most_common_price_category, 'Unknown')
+                
+                # Draw the most common price category on the PDF
+                ReportGenerator.draw_text(pdf_canvas, f"{most_common_price_symbol}", 100, (68, 68, 68), 680, 420)
+                # Draw the caption for the most common price category on the PDF
+                ReportGenerator.draw_text(pdf_canvas, f"Your Favourite Price Category", 18, (68, 68, 68), 720, 420)
         else:
             # If the user does not exist, draw an error message on the PDF
             ReportGenerator.draw_text(pdf_canvas, "There was an error generating your Culinary Mapped.", 24, (68, 68, 68))

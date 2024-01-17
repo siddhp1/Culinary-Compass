@@ -152,12 +152,12 @@ class RecommendationGenerator():
     # Static method for getting local restaurants with the user's preferred categories
     @staticmethod
     # Parameters: coordinates, list of preferred categories
-    def get_local_restaurants(coords, top_categories):   
+    def get_local_restaurants(coords, top_categories, radius):   
         # Process the categories into a comma-separated string of the IDs
         categories = ','.join(category_id for category_name, category_id in top_categories)
         
         # FourSquare API request URL with restaurant name and coordinates
-        url = f"https://api.foursquare.com/v3/places/search?&ll={coords}&radius=10000&categories={categories}&limit=10&fields=name%2Cfsq_id%2Ccategories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
+        url = f"https://api.foursquare.com/v3/places/search?&ll={coords}&radius={radius * 1000}&categories={categories}&limit=10&fields=name%2Cfsq_id%2Ccategories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
         
         # API settings and key
         headers = {
@@ -382,7 +382,7 @@ class RecommendationGenerator():
         return sorted_restaurant_ids
     
     @staticmethod
-    def generate_recommendation(id, coords):
+    def generate_recommendation(id, coords, radius):
         # Get the user's preferred restaurants and categories
         top_categories, preferred_restaurants = RecommendationGenerator.get_user_preferences(id)
         # print(top_categories, preferred_restaurants)
@@ -391,7 +391,7 @@ class RecommendationGenerator():
         preferred_attributes = RecommendationGenerator.user_preferred_attributes(preferred_restaurants, id)
 
         # Get local restaurants with the user's preferred categories
-        restaurant_ids = RecommendationGenerator.get_local_restaurants(coords, top_categories)
+        restaurant_ids = RecommendationGenerator.get_local_restaurants(coords, top_categories, radius)
         
         # Cosine similarity to rank the restaurants
         recommendation_order = RecommendationGenerator.cosine_similarity(restaurant_ids, preferred_attributes)

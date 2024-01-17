@@ -83,19 +83,24 @@ ul {
     object-fit:cover;
 }
 
-/* Set dimensions and border radius for tutorial images */
-.tutorial-img {
-    height: 380px;
-    width: auto;
-    border-radius: 10px;
-}
-
 /* Set dimensions and margin for navbar account image */
 .nav-account-image {
     height: 30px;
     width: 30px;
     margin-left: 5px;
     object-fit:cover;
+}
+
+/* Set dimensions for home page logo */
+.logo-img {
+    height: 10em;
+    object-fit:cover;
+}
+
+/* Set dimensions and border radius for home page tutorial images */
+.tutorial-img {
+    max-width: 100%;
+    border-radius: 10px;
 }
 
 /* Account page */
@@ -113,36 +118,27 @@ ul {
 
 /* Set container section padding */
 .container-section {
-    padding: 25px;
+    padding: 25px 100px 25px 100px;
 }
 
 /* Set font size for home page header */
 .header-home {
-    font-size: 10rem;
-}
-
-/* Set dimensions for home page logo */
-.logo-img {
-    height: 40vh;
-    width: 40vh;
-    object-fit:cover;
+    font-size: 10vw;
 }
 
 /* Set background color, text colour, and height of landing section */
 #landing {
     background-color: #FAA307;
     color: #444444;
-    height: 100vh;
+    min-height: 100vh;
 }
 
-/* Set background color and height of about section */
+/* Set background color of about section */
 #about {
     background-color: #F48C06;
-    height: 68vh;
 }
 
-/* Set background color and tutorial of background section */
+/* Set background color of tutorial section */
 #tutorial {
     background-color: #FAA307;
-    height: 70vh;
 }

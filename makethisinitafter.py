@@ -1,5 +1,7 @@
 # Import os module for environment variables
 import os
+# Import json module for reading JSON config file
+import json
 # Import flask for web app framework
 from flask import Flask
 # Import SQLAlchemy for database management
@@ -14,11 +16,16 @@ from flask_mail import Mail
 # App and database configuration
 app = Flask(__name__)
 
+# Read the config.json file
+with open('/etc/config.json') as config_file:
+    # Load the config.json file
+    config = json.load(config_file)
+
 # Set a secret key for securing session data
-app.config['SECRET_KEY'] = '0321e05b9aff462378618d5d21b91117'
+app.config['SECRET_KEY'] = config.get('SECRET_KEY')
 
 # Configure the SQLite3 database URI for SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = config.get('SQLALCHEMY_DATABASE_URI')
 
 # Initialize SQLAlchemy for database management
 db = SQLAlchemy(app)
@@ -40,14 +47,14 @@ app.config['MAIL_PORT'] = 587
 # Set mail server to use Transport Layer Security, a security protocol that encrypts email for privacy
 app.config['MAIL_USE_TLS'] = True
 # Get email from environment variable
-app.config['MAIL_USERNAME'] = os.environ.get('DEV_EMAIL_USER')
+app.config['MAIL_USERNAME'] = config.get('EMAIL_USER')
 # Get password from environment variable
-app.config['MAIL_PASSWORD'] = os.environ.get('DEV_EMAIL_PASS')
+app.config['MAIL_PASSWORD'] = config.get('EMAIL_PASS')
 # Initialize Mail for sending password reset emails
 mail = Mail(app)
 
 # API Keys
 # Google Maps API key
-google = 'AIzaSyDSIgTk8Aj1Z0vmWCm-agORBlCC-lKJvTs'
+google = config.get('GOOGLE')
 # Foursquare API key
-foursquare = 'fsq3Z31+TGJRML41f8A6Ks8ZwYg5ypEk4bvQ28eO6sFvRxQ='
+foursquare = config.get('FOURSQUARE')

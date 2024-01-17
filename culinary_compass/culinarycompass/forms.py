@@ -5,9 +5,9 @@ from flask_wtf.file import FileField, FileAllowed
 # Import flask_login for user sessions
 from flask_login import current_user
 # Import fields for web forms
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, RadioField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, RadioField, IntegerField
 # Import validators for web forms
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 # Import User model from models.py
 from culinarycompass.models import User
 
@@ -144,5 +144,7 @@ class ReportForm(FlaskForm):
     
 # Recommendation form (for generating a list of recommended restaurants)
 class RecommendationForm(FlaskForm):
+    # Integer field for search radius with default value of 10, min of 1 and max of 30
+    radius = IntegerField('Search Radius (km)', default=5, validators=[NumberRange(min=1, max=30)], render_kw={"placeholder": "5"})
     # Submit field for submitting the form
     submit = SubmitField('Generate Recommendations')

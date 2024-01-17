@@ -578,8 +578,10 @@ def find():
     
     # If the form is valid
     if form.validate_on_submit():
+        # Get search radius from the form
+        radius = form.radius.data
         # Generate the recommendations
-        recommended_ids = RecommendationGenerator.generate_recommendation(current_user.id, coords)
+        recommended_ids = RecommendationGenerator.generate_recommendation(current_user.id, coords, radius)
         # Get the recommended restaurants from the database        
         recommendations = [Restaurant.query.get(id) for id in recommended_ids]
         # Render the find restaurants template with the recommendations

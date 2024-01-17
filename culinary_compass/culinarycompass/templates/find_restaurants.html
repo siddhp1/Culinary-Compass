@@ -17,14 +17,37 @@
 
     <!-- Start of the form to submit the location -->
     <form method="POST" action="">
-        <!-- Generate a hidden CSRF token field -->
-        {{ form.hidden_tag() }}
-        <!-- Start of the submit button form control -->
-        <div id="generate-button" class="form-group">
-            <!-- Render the submit button -->
-            {{ form.submit(class="btn btn-info mb-3") }}
+        <!-- Start of the container for the form -->
+        <div class="container">
+            <!-- Start of the row for the form -->
+            <div class="row justify-content-center">
+                <!-- Start of the column for the location field -->
+                <div class="col-md-6">
+                    <!-- Generate a hidden CSRF token field -->
+                    {{ form.hidden_tag() }}
+
+                    <!-- Start of the radius field form control -->
+                    <div id="radius-field" class="form-group">
+                        <!-- Render the label for the radius field -->
+                        {{ form.radius.label(class="form-label") }}
+                        <!-- Render the radius field -->
+                        {{ form.radius(class="form-control") }}
+                        <!-- Div that gets automatically scolled to when the recommendations load -->
+                        <div class="mb-6" id="scroll-point"></div>
+                    </div>
+                    <!-- End of the radius field form control -->
+                    <!-- Start of the submit button form control -->
+                    <div id="generate-button" class="form-group">
+                        <!-- Render the submit button -->
+                        {{ form.submit(class="btn btn-info btn-block") }}
+                    </div>
+                    <!-- End of the submit button form control -->
+                </div>
+                <!-- End of the column for the location field -->
+            </div>
+            <!-- End of the row for the form -->
         </div>
-        <!-- End of the submit button form control -->
+        <!-- End of the container for the form -->
     </form>
     <!-- End of the form to submit the location -->
 
@@ -101,8 +124,24 @@
     
     // Function to initialize the map with a marker
     function initMap() {
+        // If the session variable for the coordinates exists (if the user has already chosen a location)
+        if (sessionStorage.getItem('coordinates')) {
+
+            // Get the coordinates from the session variable
+            var coordinates = sessionStorage.getItem('coordinates').split(',');
+
+            // Create a location object from the coordinates
+            var location = {
+                lat: parseFloat(coordinates[0]),
+                lng: parseFloat(coordinates[1])
+            };
+
+            // Initialize the map with the location
+            initializeMap(location);
+            
+        } 
         // Check if geolocation is supported
-        if (navigator.geolocation) {
+        else if (navigator.geolocation) {
             // Try to get the user's current position
             navigator.geolocation.getCurrentPosition(
                 function(position) {
@@ -119,7 +158,8 @@
                     initializeMap(defaultLocation);
                 }
             );
-        } else {
+        } 
+        else {
             // If geolocation is not supported, use a default location as the initial position
             var defaultLocation = { lat: 43.6834, lng: -79.7660 }; // Brampton, Ontario, Canada
             initializeMap(defaultLocation);
@@ -167,6 +207,9 @@
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         // Send the request
         xhr.send(params);
+
+        // Set session variable for the coordinates
+        sessionStorage.setItem('coordinates', lat + ',' + lng);
     }
     
     // Function to load the Google Maps API script
@@ -187,10 +230,13 @@
         loadMapScript();
     });
     
-    // Add an event listener for the 'DOMContentLoaded' event to scroll to the recommendations when the page is fully loaded
+    // Add an event listener for the 'DOMContentLoaded' event to auto scroll to the recommendations when the page is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
-        var recommendations = document.getElementById('generate-button');
+        // Scroll down to the recommendation button
+        var recommendations = document.getElementById('scroll-point');
+        // If the button exists
         if (recommendations) {
+            // Scroll to the button
             recommendations.scrollIntoView({ behavior: 'smooth' });
         }
     });

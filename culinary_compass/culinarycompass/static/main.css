@@ -93,7 +93,7 @@ ul {
 
 /* Set dimensions for home page logo */
 .logo-img {
-    height: 10em;
+    height: 20em;
     object-fit:cover;
 }
 

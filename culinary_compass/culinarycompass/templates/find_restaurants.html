@@ -112,14 +112,31 @@
 <script>
     // Function to open Google Maps Directions in a new tab
     function openGoogleMapsDirections(button) {
+        // Prevent the default behavior of the anchor tag
+        event.preventDefault();
         // Get the address from the data attribute of the button
         var address = button.getAttribute('data-address');
         // Encode the address for the Google Maps URL
         var encodedAddress = encodeURIComponent(address);
-        // Construct the Google Maps Directions URL
-        var mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodedAddress;
-        // Open the URL in a new tab
-        window.open(mapsUrl, '_blank');
+
+        // Use the Geolocation API to get the user's current position
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                // Get the latitude and longitude from the position
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+
+                // Construct the Google Maps Directions URL with the user's current position as the origin
+                var mapsUrl = 'https://www.google.com/maps/dir/?api=1&origin=' + lat + ',' + lon + '&destination=' + encodedAddress;
+
+                // Open the URL in a new tab
+                window.open(mapsUrl, '_blank');
+            });
+        } else {
+            // Geolocation is not supported by this browser, just use the destination
+            var mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodedAddress;
+            window.open(mapsUrl, '_blank');
+        }
     }
     
     // Function to initialize the map with a marker

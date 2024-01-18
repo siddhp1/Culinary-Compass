@@ -136,6 +136,11 @@ class ReportGenerator:
                 if all_categories:
                     # Extract the name from the first category
                     first_category_name = all_categories[0].split(':')[0].strip("'\"")  # Extract the name from the first category
+                    # If the category is "Restaurant", skip this iteration
+                    if first_category_name.lower() == "restaurant":
+                        continue
+                    # If the category contains the word "restaurant", remove it
+                    first_category_name = first_category_name.replace("Restaurant", "").replace("restaurant", "").strip()
                     # Append the name to the list
                     categories.append(first_category_name)
                 
@@ -240,7 +245,7 @@ class ReportGenerator:
             plt.clf()
             
             # Draw the image on the PDF
-            pdf_canvas.drawImage(image_path, x=-20, y=-20, width=350, height=250)
+            pdf_canvas.drawImage(image_path, x=0, y=0, width=300, height=220)
             # Remove the image from the static folder
             os.remove(os.path.join(app.root_path, f'static/reports/{random_hex}.png'))
             

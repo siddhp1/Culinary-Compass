@@ -48,6 +48,6 @@ mail = Mail(app)
 
 # API Keys
 # Google Maps API key
-google = 'AIzaSyDSIgTk8Aj1Z0vmWCm-agORBlCC-lKJvTs'
+google = ''
 # Foursquare API key
-foursquare = 'fsq3Z31+TGJRML41f8A6Ks8ZwYg5ypEk4bvQ28eO6sFvRxQ='
+foursquare = ''

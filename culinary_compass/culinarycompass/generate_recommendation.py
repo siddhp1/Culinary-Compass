@@ -30,8 +30,15 @@ class RecommendationGenerator():
             # Split the visited restaurant's category string into individual categories
             categories = visit.restaurant.category.split(',')
             
+            # Skip the restaurant if it has no categories
+            if not categories or categories == ['']:
+                continue
+            
             # For each category
             for category in categories:
+                # Skip the restaurant if the categories have no id
+                if ':' not in category:
+                    continue
                  # Split the category into the name and id
                 category_name, category_id = category.split(':')
                 # Increment the count of the category tuple (name, id)
@@ -320,7 +327,7 @@ class RecommendationGenerator():
     # Static method for computing cosine similarity
     @staticmethod
     # Parameters: list of restaurant IDs, user's preferred attributes
-    def cosine_similarity(restaurant_ids, preferred_attributes):
+    def rank_restaurants(restaurant_ids, preferred_attributes):
         # Get the restaurants from the database
         suggested_restaurants = [Restaurant.query.get(id) for id in restaurant_ids]
 
@@ -385,16 +392,11 @@ class RecommendationGenerator():
     def generate_recommendation(id, coords, radius):
         # Get the user's preferred restaurants and categories
         top_categories, preferred_restaurants = RecommendationGenerator.get_user_preferences(id)
-        # print(top_categories, preferred_restaurants)
-        
         # Get the user's preferred attributes
         preferred_attributes = RecommendationGenerator.user_preferred_attributes(preferred_restaurants, id)
-
         # Get local restaurants with the user's preferred categories
         restaurant_ids = RecommendationGenerator.get_local_restaurants(coords, top_categories, radius)
-        
         # Cosine similarity to rank the restaurants
-        recommendation_order = RecommendationGenerator.cosine_similarity(restaurant_ids, preferred_attributes)
-        
+        recommendation_order = RecommendationGenerator.rank_restaurants(restaurant_ids, preferred_attributes)
         # Return the recommendation
         return(recommendation_order)

@@ -338,61 +338,109 @@ def add():
         # Variable to store if restaurant is found in FourSquare database
         found = False
         
-        # Check if restaurant searched is already in the database
-        restaurant_exists = Restaurant.query.filter_by(full_name=restaurant_full_name).first()
-        # If restaurant is not found in database, fetch from Foursquare Places API
-        if not restaurant_exists:
-            # Get name of restaurant from google autocomplete
-            parts = restaurant_full_name.split(', ', 1)
-            restaurant_name = parts[0] # Get the name of the restaurant
-            
-            # FourSquare API request URL with restaurant name and coordinates
-            url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}&fields=fsq_id%2Ccategories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
-            
-            # API settings and key
-            # MAKE AN APP/ENVIRONMENT VARIABLE
-            headers = {
-                "accept": "application/json",
-                "Authorization": foursquare
-            }
-            
-            # Make the API request and store the response
-            response = requests.get(url, headers=headers)
-            # Parse the JSON data
-            parsed_data = response.json()
-            
-            print(response.text)
+        # Get name of restaurant from google autocomplete
+        parts = restaurant_full_name.split(', ', 1)
+        restaurant_name = parts[0] # Get the name of the restaurant
+        
+        # FourSquare API request URL with restaurant name and coordinates
+        url = f"https://api.foursquare.com/v3/places/match?name={restaurant_name}&ll={restaurant_coords}&fields=fsq_id%2Ccategories%2Cmenu%2Cwebsite%2Cprice%2Ctastes%2Cfeatures%2Clocation%2Cdescription"
+        
+        # API settings and key
+        # MAKE AN APP/ENVIRONMENT VARIABLE
+        headers = {
+            "accept": "application/json",
+            "Authorization": foursquare
+        }
+        
+        # Make the API request and store the response
+        response = requests.get(url, headers=headers)
+        # Parse the JSON data
+        parsed_data = response.json()
 
-            # Check if a match is found
-            if 'place' in parsed_data and 'location' in parsed_data['place']:  
-                
-                # Extract the restaurant id from the response in a session variable
-                fsq_id = parsed_data['place']['fsq_id']
-                # Store the restaurant id in the session
-                session['fsq_id'] = fsq_id  
-                
-                # Extract the category information
-                categories = [f"{category['short_name']}:{category['id']}" for category in parsed_data['place']['categories']]
-                # Store the categories as a comma-separated string
-                categories_str = ",".join(categories) 
-                
-                # Extract the menu information
-                menu = parsed_data['place'].get('menu')
-                # Extract the website information
-                website = parsed_data['place'].get('website')
+        # Check if a match is found
+        if 'place' in parsed_data and 'location' in parsed_data['place']:  
+            
+            # Extract the restaurant id from the response in a session variable
+            fsq_id = parsed_data['place']['fsq_id']
+            # Store the restaurant id in the session
+            session['fsq_id'] = fsq_id  
+            
+            # Extract the category information
+            categories = [f"{category['short_name']}:{category['id']}" for category in parsed_data['place']['categories']]
+            # Store the categories as a comma-separated string
+            categories_str = ",".join(categories) 
+            
+            # Extract the menu information
+            menu = parsed_data['place'].get('menu')
+            # Extract the website information
+            website = parsed_data['place'].get('website')
 
-                # Check if restaurant tastes information is available
-                tastes = parsed_data['place'].get('tastes')
-                # If tastes is not None, store the tastes as a comma-separated string
-                tastes_str = ",".join(tastes) if tastes else None
+            # Check if restaurant tastes information is available
+            tastes = parsed_data['place'].get('tastes')
+            # If tastes is not None, store the tastes as a comma-separated string
+            tastes_str = ",".join(tastes) if tastes else None
 
-                # Extract the description information
-                description = parsed_data['place'].get('description')
-                # Extract the price information
-                price = parsed_data['place'].get('price')
-                # Get the address from the response
-                address = parsed_data['place']['location']['formatted_address']
+            # Extract the description information
+            description = parsed_data['place'].get('description')
+            # Extract the price information
+            price = parsed_data['place'].get('price')
+            # Get the address from the response
+            address = parsed_data['place']['location']['formatted_address']
 
+            # Check if restaurant price information is available
+            if 'features' in parsed_data['place']:
+                # Get the price from the response
+                features_data = parsed_data['place']['features']
+            else:
+                # Otherwise, set the features to None
+                features_data = None
+
+            # Create a list of feature names based on the RestaurantFeature model columns
+            feature_columns = [column.name for column in RestaurantFeature.__table__.columns]
+            # Initialize the dictionary to store feature values
+            feature_values = {}
+            # Sections to ignore
+            ignore_sections = ['payment', 'services', 'amenities']
+
+            # Flatten nested structures in features_data
+            def flatten_features(data, prefix=""):
+                # If data is None, return an empty dictionary
+                if data is None:
+                    return {}
+
+                # Initialize the dictionary to store flattened features
+                flat_data = {}
+                # Iterate through the features
+                for key, value in data.items():
+                    # Check if the key is in the ignore_sections list
+                    if key in ignore_sections:
+                        continue  # Skip sections to be ignored
+                    # Check if the value is a dictionary
+                    if isinstance(value, dict):
+                        # If the value is a dictionary, flatten the dictionary and add the flattened features to the flat_data dictionary
+                        flat_data.update(flatten_features(value, f"{prefix}{key}_"))
+                    # Check if the value is a list
+                    else:
+                        # If the value is a list, add the value to the flat_data dictionary
+                        flat_data[key] = value # Use only the last part of the prefix as the feature name
+                # Return the flattened features
+                return flat_data
+
+            # Flatten the features
+            flattened_features = flatten_features(features_data)
+
+            # Iterate through features and check if the corresponding column exists
+            for feature_name, feature_data in flattened_features.items():
+                # Check if the feature name is in the feature columns
+                if feature_name in feature_columns:
+                    # If the feature column exists, set its value in the feature_values dictionary
+                    feature_values[feature_name] = feature_data
+
+            # Query the database for the restaurant
+            restaurant_exists = Restaurant.query.filter_by(id=fsq_id).first()
+            
+            # Check if restaurant searched is already in the database
+            if not restaurant_exists:
                 # Add the information to the database
                 restaurant = Restaurant(
                     id=fsq_id,
@@ -406,77 +454,22 @@ def add():
                     description=description, 
                     tastes=tastes_str
                 )
-                
-                # Check if restaurant price information is available
-                if 'features' in parsed_data['place']:
-                    # Get the price from the response
-                    features_data = parsed_data['place']['features']
-                else:
-                    # Otherwise, set the features to None
-                    features_data = None
-
-                # Create a list of feature names based on the RestaurantFeature model columns
-                feature_columns = [column.name for column in RestaurantFeature.__table__.columns]
-                # Initialize the dictionary to store feature values
-                feature_values = {}
-                # Sections to ignore
-                ignore_sections = ['payment', 'services', 'amenities']
-
-                # Flatten nested structures in features_data
-                def flatten_features(data, prefix=""):
-                    # If data is None, return an empty dictionary
-                    if data is None:
-                        return {}
-
-                    # Initialize the dictionary to store flattened features
-                    flat_data = {}
-                    # Iterate through the features
-                    for key, value in data.items():
-                        # Check if the key is in the ignore_sections list
-                        if key in ignore_sections:
-                            continue  # Skip sections to be ignored
-                        # Check if the value is a dictionary
-                        if isinstance(value, dict):
-                            # If the value is a dictionary, flatten the dictionary and add the flattened features to the flat_data dictionary
-                            flat_data.update(flatten_features(value, f"{prefix}{key}_"))
-                        # Check if the value is a list
-                        else:
-                            # If the value is a list, add the value to the flat_data dictionary
-                            flat_data[key] = value # Use only the last part of the prefix as the feature name
-                    # Return the flattened features
-                    return flat_data
-
-                # Flatten the features
-                flattened_features = flatten_features(features_data)
-
-                # Iterate through features and check if the corresponding column exists
-                for feature_name, feature_data in flattened_features.items():
-                    # Check if the feature name is in the feature columns
-                    if feature_name in feature_columns:
-                        # If the feature column exists, set its value in the feature_values dictionary
-                        feature_values[feature_name] = feature_data
-
                 # Only create a RestaurantFeature object if feature_values is not empty
                 if feature_values:
                     # Create a new RestaurantFeature object with the feature values
                     restaurant_features = RestaurantFeature(restaurant_id=restaurant.id, **feature_values)
                     # Add the restaurant features to the database
                     db.session.add(restaurant_features)
-
                 # Add the restaurant to the database 
                 db.session.add(restaurant)
                 # Commit the changes to the database
                 db.session.commit()
-
-                # Set found to true
-                found = True
-            # If a match is not found in the FourSquare database
-            else:
-                # Redirect to the add restaurant page
-                found = False
-        else:
-            # If restaurant is found in the culinary compass database
+            # Set found to true
             found = True
+        # If a match is not found in the FourSquare database
+        else:
+            # Redirect to the add restaurant page
+            found = False
         
         # If restaurant is found in the database
         if found:

@@ -6,7 +6,7 @@
     <div class="content-section">
         <!-- The form for registering, method is POST, novalidate disables browser validations -->
         <form method="POST" action="" novalidate>
-            <!-- A hidden tag for the form -->
+            <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
             {{ form.hidden_tag() }}
             <!-- A fieldset for grouping related elements in the form -->
             <fieldset class="form-group">

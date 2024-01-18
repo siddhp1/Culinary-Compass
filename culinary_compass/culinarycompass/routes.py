@@ -165,7 +165,7 @@ def delete_report(pdf_path):
 def account():
     # Initialize the update account form
     update_account_form = UpdateAccountForm()
-    # If the form is valid
+    # If the form submission is valid
     if update_account_form.validate_on_submit():
         # Update the user's username
         current_user.username = update_account_form.username.data
@@ -194,7 +194,7 @@ def account():
     
     # Initialize the questionnaire form
     questionnaire_form = QuestionnaireForm()
-    # If the form is valid
+    # If the form submission is valid
     if questionnaire_form.validate_on_submit():
         # Update the user's dietary preference
         current_user.vegetarianism = questionnaire_form.vegetarianism.data
@@ -223,7 +223,7 @@ def account():
     
     # Initialize the report form
     report_form = ReportForm()
-    # If the form is valid
+    # If the form submission is valid
     if report_form.validate_on_submit():
         # Set the pdf name to the current user's username
         pdf_name = current_user.username
@@ -273,7 +273,7 @@ def reset_request():
         return(redirect(url_for('home')))
     # Initialize the request reset form
     form = RequestResetForm()
-    # If the form is valid
+    # If the form submission is valid
     if form.validate_on_submit():
         # Query the database for the user
         user = User.query.filter_by(email=form.email.data).first()
@@ -301,9 +301,9 @@ def reset_token(token):
         flash('Invalid or expired token.', 'warning')
         # Redirect to the reset request page
         return(redirect(url_for('reset_request')))
-    # Otherwise, nitialize the reset password form
+    # Otherwise, initialize the reset password form
     form = ResetPasswordForm()
-    # If the form is valid
+    # If the form submission is valid
     if form.validate_on_submit():
         # Hash the password
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -569,7 +569,7 @@ def find():
     # Get the coordinates from the session
     coords = session.get('coordinates', None)
     
-    # If the form is valid
+    # If the form submission is valid
     if form.validate_on_submit():
         # Get search radius from the form
         radius = form.radius.data

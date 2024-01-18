@@ -1,12 +1,12 @@
-<!-- Extends the base layout defined in "layout.html" -->
+<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
 {% extends "layout.html" %}
-<!-- Defines the content block that will be inserted into the base layout -->
+<!-- Elements unique to the account page will be placed inside the content block -->
 {% block content %}
     <!-- A div for centering text -->
     <div class="text-center">
         <!-- The title for the page -->
         <h1 class="mb-3">My Restaurants</h1>
-        <!-- A subheading -->
+        <!-- Subheading for the page -->
         <h5 class="mb-1">Visited a restaurant recently?</h5>
         <!-- A link to add a restaurant -->
         <a href="{{ url_for('add') }}" class="btn btn-info mb-3">Add Restaurant</a>

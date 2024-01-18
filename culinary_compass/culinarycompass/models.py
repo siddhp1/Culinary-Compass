@@ -118,6 +118,7 @@ class RestaurantFeature(db.Model):
     vegan_diet = db.Column(db.String(200)) # If the restaurant has vegan options
     vegetarian_diet = db.Column(db.String(200)) # If the restaurant has vegetarian options
     
+    # Function to return all of the data in the RestaurantFeature table
     def get_all_data(self):
         return {
             'bar_service': self.bar_service,

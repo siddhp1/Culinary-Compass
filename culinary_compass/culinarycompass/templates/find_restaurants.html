@@ -1,9 +1,7 @@
-<!-- Extend the base layout -->
+<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
 {% extends "layout.html" %}
-
-<!-- Define the content block -->
+<!-- Elements unique to the account page will be placed inside the content block -->
 {% block content %}
-
 <!-- Start of the main div -->
 <div class="text-center">
     <!-- Display the main title -->
@@ -23,7 +21,7 @@
             <div class="row justify-content-center">
                 <!-- Start of the column for the location field -->
                 <div class="col-md-6">
-                    <!-- Generate a hidden CSRF token field -->
+                    <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
                     {{ form.hidden_tag() }}
 
                     <!-- Start of the radius field form control -->
@@ -36,6 +34,7 @@
                         <div class="mb-6" id="scroll-point"></div>
                     </div>
                     <!-- End of the radius field form control -->
+
                     <!-- Start of the submit button form control -->
                     <div id="generate-button" class="form-group">
                         <!-- Render the submit button -->
@@ -43,11 +42,8 @@
                     </div>
                     <!-- End of the submit button form control -->
                 </div>
-                <!-- End of the column for the location field -->
             </div>
-            <!-- End of the row for the form -->
         </div>
-        <!-- End of the container for the form -->
     </form>
     <!-- End of the form to submit the location -->
 
@@ -99,11 +95,8 @@
                         </div>
                         <!-- End of the column for the address and directions -->
                     </div>
-                    <!-- End of the row for the recommendation details -->
                 </div>
-                <!-- End of the card body -->
             </div>
-            <!-- End of the card for the recommendation -->
         {% endfor %}
     {% endif %}
 </div>

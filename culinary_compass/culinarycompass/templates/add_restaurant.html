@@ -1,6 +1,6 @@
-<!-- Extend the base layout -->
+<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
 {% extends "layout.html" %}
-<!-- Define the content block -->
+<!-- Elements unique to the account page will be placed inside the content block -->
 {% block content %}
 <!-- Start of the main div -->
 <div>
@@ -8,7 +8,7 @@
     <div class="content-section">
         <!-- Start of the search restaurant form -->
         <form method="POST" action="">
-            <!-- Generate a hidden CSRF token field -->
+            <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
             {{ search_form.hidden_tag() }}
             <!-- Start of a group of related form controls -->
             <fieldset class="form-group">
@@ -134,7 +134,7 @@
 </div>
 <!-- End of the main div -->
 <script>
-    // Load the Google Places API key from the server side
+    // Load the Google Places API key from the server
     var googlePlacesAPIKey = '{{ key }}';
 
     // Define an asynchronous function to initialize Google Places Autocomplete

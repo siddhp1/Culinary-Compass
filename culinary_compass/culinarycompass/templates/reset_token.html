@@ -6,7 +6,7 @@
     <div class="content-section">
         <!-- Form for resetting the password, method is POST -->
         <form method="POST" action="">
-            <!-- Generates a hidden tag for the form -->
+            <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
             {{ form.hidden_tag() }}
             <!-- Starts a group for grouping related elements in the form -->
             <fieldset class="form-group">

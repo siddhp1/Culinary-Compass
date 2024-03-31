@@ -10,7 +10,7 @@ A restaurant tracking and recommendation web application that helps user remembe
 
 ## About Culinary Compass
 
-Culinary Compass lets users track their restaurant history and generate personalized recommendations, sorted in order of predicted preference, in a chosen location. The user can also create a report with a recap of their restaurant visits in the current year. Culinary Compass is built with Flask and Bootstrap, served by an Nginx web server hosted on a Azure virtual machine. It features a cosine similarity algorithm and the Google and Foursquare Places APIs. Secured with bcrypt password hashing and TLS encryption.
+Culinary Compass lets users track their restaurant history and generate personalized recommendations, sorted in order of predicted preference, in a chosen location. The user can also create a report with a recap of their restaurant visits in the current year. Culinary Compass is built with Flask and Bootstrap, served by an Nginx web server hosted on an Azure virtual machine. It features a cosine similarity algorithm and the Google and Foursquare Places APIs. Secured with bcrypt password hashing and TLS encryption.
 
 ## Usage
 

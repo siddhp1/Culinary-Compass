@@ -1,163 +1,100 @@
-<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
-{% extends "layout.html" %}
-<!-- Elements unique to the account page will be placed inside the content block -->
-{% block content %}
-<!-- Start of the main div -->
+{% extends "layout.html" %} {% block content %}
 <div>
-    <!-- Start of the content section -->
     <div class="content-section">
-        <!-- Start of the search restaurant form -->
         <form method="POST" action="">
-            <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
             {{ search_form.hidden_tag() }}
-            <!-- Start of a group of related form controls -->
             <fieldset class="form-group">
-                <!-- The title of the form group -->
                 <legend class="border-bottom mb-4">Search restaurant</legend>
-                <!-- Start of the name form control -->
                 <div class="form-group">
-                    <!-- Display the label for the name field -->
-                    {{ search_form.name.label(class="form-control-label") }}
-                    <!-- Check if there are any validation errors for the name field -->
-                    {% if search_form.name.errors %}
-                        <!-- If there are errors, apply the 'is-invalid' class to the input field -->
-                        {{ search_form.name(id="autocomplete", class="form-control form-control-lg is-invalid") }}
-                        <!-- Start of the error messages display -->
-                        <div class="invalid-feedback">
-                            <!-- Loop through each error message -->
-                            {% for error in search_form.name.errors %}
-                                <!-- Display the error message -->
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <!-- If there are no errors, render the input field normally -->
-                        {{ search_form.name(id="autocomplete", class="form-control form-control-lg") }}
-                    {% endif %}
-                    <!-- Hidden input field for the place's latitude and longitude -->
-                    <input type="hidden" name="place_latlng" id="place_latlng">
+                    {{ search_form.name.label(class="form-control-label") }} {%
+                    if search_form.name.errors %} {{
+                    search_form.name(id="autocomplete", class="form-control
+                    form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in search_form.name.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %} {{ search_form.name(id="autocomplete",
+                    class="form-control form-control-lg") }} {% endif %}
+                    <input
+                        type="hidden"
+                        name="place_latlng"
+                        id="place_latlng"
+                    />
                 </div>
-                <!-- End of the name form control -->
             </fieldset>
-            <!-- End of the form group -->
-
-            <!-- Start of the submit button form control -->
             <div class="form-group">
-                <!-- Render the submit button -->
                 {{ search_form.submit(class="btn btn-outline-info") }}
             </div>
-            <!-- End of the submit button form control -->
         </form>
-        <!-- End of the search restaurant form -->
     </div>
-    <!-- End of the content section -->
-
-    <!-- Check if the submit form should be visible -->
     {% if submit_form_visible %}
-        <!-- Start of the content section -->
-        <div class="content-section">
-            <!-- Start of the add restaurant form -->
-            <form method="POST" action="">
-                <!-- Generate a hidden CSRF token field -->
-                {{ submit_form.hidden_tag() }}
-                <!-- Start of a group of related form controls -->
-                <fieldset class="form-group">
-                    <!-- The title of the form group -->
-                    <legend class="border-bottom mb-4">Add restaurant</legend>
-                    <!-- Start of the date form control -->
-                    <div class="form-group">
-                        <!-- Display the label for the date field -->
-                        {{ submit_form.date.label(class="form-control-label") }}
-                        <!-- Check if there are any validation errors for the date field -->
-                        {% if submit_form.date.errors %}
-                            <!-- If there are errors, apply the 'is-invalid' class to the input field -->
-                            {{ submit_form.date(class="form-control form-control-lg is-invalid") }}
-                            <!-- Start of the error messages display -->
-                            <div class="invalid-feedback">
-                                <!-- Loop through each error message -->
-                                {% for error in submit_form.date.errors %}
-                                    <!-- Display the error message -->
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <!-- If there are no errors, render the input field normally -->
-                            {{ submit_form.date(class="form-control form-control-lg") }}
-                        {% endif %}
-                    </div>
-                    <!-- End of the date form control -->
-
-                    <!-- Start of the rating form control -->
-                    <div class="form-group">
-                        <!-- Display the label for the rating field -->
-                        <label class="form-control-label">Rating</label>
-                        <!-- Start of the rating stars display -->
-                        <div class="rating-stars">
-                            <!-- Loop through each choice in the rating field -->
-                            {% for rating, label in submit_form.rating.choices %}
-                                <!-- Render a radio input field for each choice -->
-                                <input type="radio" name="{{ submit_form.rating.name }}" value="{{ rating }}"
-                                       {% if submit_form.rating.data == rating %}checked{% endif %} class="star">
-                                <!-- Display the label for the choice -->
-                                <label class="star-label">{{ label }}</label>
-                            {% endfor %}
-                        </div>
-                        <!-- End of the rating stars display -->
-
-                        <!-- Check if there are any validation errors for the rating field -->
-                        {% if submit_form.rating.errors %}
-                            <!-- Start of the error messages display -->
-                            <div class="invalid-feedback d-block">
-                                <!-- Loop through each error message -->
-                                {% for error in submit_form.rating.errors %}
-                                    <!-- Display the error message -->
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <!-- End of the rating form control -->
-                </fieldset>
-                <!-- End of the form group -->
-
-                <!-- Start of the submit button form control -->
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ submit_form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Add restaurant</legend>
                 <div class="form-group">
-                    <!-- Render the submit button -->
-                    {{ submit_form.submit(class="btn btn-outline-info") }}
+                    {{ submit_form.date.label(class="form-control-label") }} {%
+                    if submit_form.date.errors %} {{
+                    submit_form.date(class="form-control form-control-lg
+                    is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in submit_form.date.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %} {{ submit_form.date(class="form-control
+                    form-control-lg") }} {% endif %}
                 </div>
-                <!-- End of the submit button form control -->
-            </form>
-            <!-- End of the add restaurant form -->
-        </div>
-        <!-- End of the content section -->
+                <div class="form-group">
+                    <label class="form-control-label">Rating</label>
+                    <div class="rating-stars">
+                        {% for rating, label in submit_form.rating.choices %}
+                        <input type="radio" name="{{ submit_form.rating.name }}"
+                        value="{{ rating }}" {% if submit_form.rating.data ==
+                        rating %}checked{% endif %} class="star">
+                        <label class="star-label">{{ label }}</label>
+                        {% endfor %}
+                    </div>
+                    {% if submit_form.rating.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in submit_form.rating.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ submit_form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
     {% endif %}
 </div>
-<!-- End of the main div -->
 <script>
-    // Load the Google Places API key from the server
-    var googlePlacesAPIKey = '{{ key }}';
+    var googlePlacesAPIKey = "{{ key }}";
 
-    // Define an asynchronous function to initialize Google Places Autocomplete
     async function initAutocomplete() {
-        // Create a new Autocomplete object, associating it with the input field with id 'autocomplete'
-        var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), {
-            // Pass the API key
-            apiKey: googlePlacesAPIKey,
-            // Specify the libraries to load ('places' in this case)
-            libraries: ['places']
-        });
+        var autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("autocomplete"),
+            {
+                apiKey: googlePlacesAPIKey,
+                libraries: ["places"],
+            }
+        );
 
-        // Add a listener for the 'place_changed' event
-        autocomplete.addListener('place_changed', function () {
-            // Get the PlaceResult object representing the selected place
+        autocomplete.addListener("place_changed", function () {
             var place = autocomplete.getPlace();
-            // Get the latitude and longitude of the selected place
-            var latlng = place.geometry.location.lat() + ',' + place.geometry.location.lng();
-            // Set the value of the hidden input field with id 'place_latlng' to the latitude and longitude
-            document.getElementById('place_latlng').value = latlng;
+            var latlng =
+                place.geometry.location.lat() +
+                "," +
+                place.geometry.location.lng();
+            document.getElementById("place_latlng").value = latlng;
         });
     }
-    // Call the initAutocomplete function to initialize Google Places Autocomplete
     initAutocomplete();
 </script>
 {% endblock content %}

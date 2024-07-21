@@ -1,7 +1,5 @@
-# Script to reset the database
-# Import the app and database
 from culinarycompass import app, db
-# With the app
+
+# Script to reset the database (development use)
 with app.app_context():
-    # Create the database tables in the models file
     db.create_all()

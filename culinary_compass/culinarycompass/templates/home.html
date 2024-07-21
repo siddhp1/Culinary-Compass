@@ -1,201 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
-    <!-- Start of the head section -->
     <head>
-        <!-- Set the character encoding for the document -->
-        <meta charset="utf-8">
-        <!-- Set the viewport for responsive design -->
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Include Bootstrap CSS from a CDN -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <!-- Include the main CSS file from the static directory -->
-        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='main.css') }}>
-        <!-- Set the title of the document -->
+        <!-- Required meta tags for responsive web design-->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+
+        <!-- Custom CSS stylesheet -->
+        <link rel="stylesheet" type="text/css" href={{ url_for('static',
+        filename='main.css') }}>
+
+        <!-- Icon and web manifest -->
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{url_for('static', filename='icons/apple-touch-icon.png')}}"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{url_for('static', filename='icons/favicon-32x32.png')}}"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{url_for('static', filename='icons/favicon-16x16.png')}}"
+        />
+        <link
+            rel="manifest"
+            href="{{url_for('static', filename='icons/site.webmanifest')}}"
+        />
+
         <title>Culinary Compass - Home</title>
     </head>
-    <!-- End of the head section -->
-
-    <!-- Start of the body section -->
-    <body> 
-        <!-- Start of the header section -->
+    <body>
         <header class="site-header">
-            <!-- Start of the navigation bar -->
             <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-                <!-- Start of the container for the navigation bar -->
-                <div class="container">
-                    <!-- Start of the brand section -->
+                <div class="container-fluid mx-lg-5">
                     <a class="navbar-brand mr-4" href="{{ url_for('home') }}">
-                        <!-- Display the logo image from the static directory -->
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="nav-account-image rounded-circle">
-                        <!-- Display the brand name -->
+                        <img
+                            src="{{ url_for('static', filename='images/logo.png') }}"
+                            alt="Logo"
+                            class="nav-account-image rounded-circle"
+                        />
                         Culinary Compass
                     </a>
-                    <!-- End of the brand section -->
-
-                    <!-- Start of the navigation bar toggler button for small screens -->
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                        <!-- Display the icon for the navigation bar toggler button -->
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#navbarToggle"
+                        aria-controls="navbarToggle"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <!-- End of the navigation bar toggler button for small screens -->
-
-                    <!-- Start of the collapsible navigation bar section -->
                     <div class="collapse navbar-collapse" id="navbarToggle">
-                        <!-- Start of the navigation links on the left side -->
                         <div class="navbar-nav mr-auto">
-                            <!-- Display the link to the user's restaurants -->
-                            <a class="nav-item nav-link" href="{{ url_for('my') }}">My Restaurants</a>
-                            <!-- Display the link to find restaurants -->
-                            <a class="nav-item nav-link" href="{{ url_for('find') }}">Find Restaurants</a>
+                            <a
+                                class="nav-item nav-link"
+                                href="{{ url_for('my') }}"
+                                >My Restaurants</a
+                            >
+                            <a
+                                class="nav-item nav-link"
+                                href="{{ url_for('find') }}"
+                                >Find Restaurants</a
+                            >
                         </div>
-                        <!-- End of the navigation links on the left side -->
-
-                        <!-- Start of the navigation links on the right side -->
                         <div class="navbar-nav">
-                            <!-- Check if the user is authenticated -->
                             {% if current_user.is_authenticated %}
-                                <!-- If the user is authenticated, display the link to the user's account -->
-                                <a class="nav-item nav-link" href="{{ url_for('account') }}">
-                                    <!-- Display the user's username -->
-                                    {{ current_user.username }}
-                                    <!-- Display the user's profile picture from the static directory -->
-                                    <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" alt="{{ current_user.username }}" class="nav-account-image rounded-circle">
-                                </a>
-
-                            <!-- If the user is not authenticated, display the links to log in and register -->
+                            <a
+                                class="nav-item nav-link"
+                                href="{{ url_for('account') }}"
+                            >
+                                {{ current_user.username }}
+                                <img
+                                    src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}"
+                                    alt="{{ current_user.username }}"
+                                    class="nav-account-image rounded-circle"
+                                />
+                            </a>
                             {% else %}
-                                <!-- Display the link to log in -->
-                                <a class="nav-item nav-link" href="{{ url_for('login') }}">Log In</a>
-                                <!-- Display the link to register -->
-                                <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                            <a
+                                class="nav-item nav-link"
+                                href="{{ url_for('login') }}"
+                                >Log In</a
+                            >
+                            <a
+                                class="nav-item nav-link"
+                                href="{{ url_for('register') }}"
+                                >Register</a
+                            >
                             {% endif %}
                         </div>
-                        <!-- End of the navigation links on the right side -->
                     </div>
                 </div>
             </nav>
-            <!-- End of the navigation bar -->
         </header>
-        <!-- End of the header section -->
-
-        <!-- Start of the main content section -->
         <main role="main" class="container-fluid">
-            <!-- Start of the main container -->
             <div class="container-fluid mx-auto text-center">
-                <!-- Start of the landing section -->
-                <div class="container-section d-flex align-items-center" id="landing">
-                    <!-- Start of the centered text container -->
+                <div class="d-flex align-items-center" id="landing">
                     <div class="mx-auto text-center">
-                        <!-- Display the main header -->
-                        <h1 class="header-home mb-4">Culinary Compass</h1>
-                        <!-- Display the subheader -->
-                        <h3 class="">Don't know where to eat? We've got you covered.</h3>
+                        <h1 class="d-none d-md-inline header-home mb-4">
+                            Culinary Compass
+                        </h1>
+                        <h1 class="d-md-none mb-4 mx-1">Culinary Compass</h1>
+                        <h3>Don't know where to eat? We've got you covered.</h3>
                     </div>
                 </div>
-                <!-- End of the landing section -->
-
-                <!-- Start of the about section -->
-                <div class="container-fluid" id="about"> 
-                    <!-- Start of the about section container -->
-                    <div class="container-section">
-                        <!-- Start of the main content column -->
+                <div class="container-fluid" id="about">
+                    <div class="pt-5">
                         <div class="col-md-8 mx-auto">
-                            <!-- Display the section header -->
                             <h1>Our Story</h1>
-                            <!-- Display the section text -->
                             <p>
-                                Welcome to Culinary Compass, where the inspiration for our restaurant finding
-                                and recommendation web application was born from the shared joy and occasional
-                                challenges of exploring new cities with family. Navigating unfamiliar streets
-                                and seeking out restaurants that cater to specific dietary preferences became
-                                a familiar ritual. Culinary Compass is our solution to simplify this experience.
-                                We understand the importance of finding vegetarian-friendly options or that perfect
-                                cuisine, and our goal is to make your culinary journey delightful. This platform
-                                goes beyond being a tool; it's your personalized guide to tracking restaurant history
-                                and receiving recommendations tailored to your tastes. Join us on this flavorful journey,
-                                and let Culinary Compass be your companion in discovering memorable dining experiences.
+                                The inspiration for our restaurant finding and
+                                recommendation web application was born from the
+                                shared joy and occasional challenges of
+                                exploring new cities with family. Navigating
+                                unfamiliar streets and seeking out restaurants
+                                that cater to specific dietary preferences
+                                became a familiar ritual. Culinary Compass is
+                                our solution to simplify this experience. We
+                                understand the importance of finding
+                                vegetarian-friendly options or that perfect
+                                cuisine, and our goal is to make your culinary
+                                journey delightful. This platform goes beyond
+                                being a tool; it's your personalized guide to
+                                tracking restaurant history and receiving
+                                recommendations tailored to your tastes. Join us
+                                on this flavorful journey, and let Culinary
+                                Compass be your companion in discovering
+                                memorable dining experiences.
                             </p>
-                            <!-- Display the logo image from the static directory -->
-                            <img class="mx-auto logo-img" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                            <img
+                                class="mx-auto col-sm-3 img-fluid"
+                                src="{{ url_for('static', filename='images/logo.png') }}"
+                                alt="Logo"
+                            />
                         </div>
                     </div>
                 </div>
-                <!-- End of the about section -->
-        
-                <!-- Start of the tutorial section -->
-                <div class="container-fluid" id="tutorial"> 
-                    <!-- Start of the tutorial section container -->
-                    <div class="container-section">
-                        <!-- Display the section header -->
+                <div class="container-fluid" id="tutorial">
+                    <div class="py-5">
                         <h1>Get Started</h1>
-                        <!-- Display the section subheader -->
                         <h5>Map your culinary experiences.</h5>
-                        <!-- Start of the tutorial steps row -->
-                        <div class="mt-4 row justify-content-center">
-                            <!-- Start of the first tutorial step column -->
-                            <div class="col-md-4">
-                                <!-- Display the step header -->
+                        <div
+                            class="mt-4 row justify-content-center container-xxl mx-auto"
+                        >
+                            <div class="col-sm-3">
                                 <h4 class="mb-2">Create an Account</h4>
-                                <!-- Display the step image from the static directory -->
-                                <img class="tutorial-img mx-auto mb-2" src="{{ url_for('static', filename='images/create_account.png') }}" alt="Create Account">
-                                <!-- Display the step text -->
+                                <img
+                                    class="tutorial-img mx-auto mb-2"
+                                    src="{{ url_for('static', filename='images/create_account.png') }}"
+                                    alt="Create Account"
+                                />
                                 <p class="mb-3">
-                                    Go to the register page and create an account.
-                                    Then login and customize your account on the account page. 
-                                    You can also add any dietary restrictions 
-                                    using the form at the bottom of the page.
+                                    Go to the register page and create an
+                                    account. Then login and customize your
+                                    account on the account page. You can also
+                                    add any dietary restrictions using the form
+                                    at the bottom of the page.
                                 </p>
                             </div>
-                            <!-- End of the first tutorial step column -->
-
-                            <!-- Start of the second tutorial step column -->
-                            <div class="col-md-4">
-                                <!-- Display the step header -->
-                                <h4 class="mb-2">Track Your Restaurant Visits</h4>
-                                <!-- Display the step image from the static directory -->
-                                <img class="tutorial-img mx-auto mb-2" src="{{ url_for('static', filename='images/my_restaurants.png') }}" alt="My Restaurants">
-                                <!-- Display the step text -->
+                            <div class="col-sm-3">
+                                <h4 class="mb-2">
+                                    Track Your Restaurant Visits
+                                </h4>
+                                <img
+                                    class="tutorial-img mx-auto mb-2"
+                                    src="{{ url_for('static', filename='images/my_restaurants.png') }}"
+                                    alt="My Restaurants"
+                                />
                                 <p class="mb-3">
-                                    Create a history of all of the restaurants you visited.
-                                    We'll study this and find out what you love to eat.
-                                    Also, you can generate a recap of your restaurant
-                                    history whenever you'd like.
+                                    Create a history of all of the restaurants
+                                    you visited. We'll study this and find out
+                                    what you love to eat. Also, you can generate
+                                    a recap of your restaurant history whenever
+                                    you'd like.
                                 </p>
                             </div>
-                            <!-- End of the second tutorial step column -->
-
-                            <!-- Start of the third tutorial step column -->
-                            <div class="col-md-4">
-                                <!-- Display the step header -->
+                            <div class="col-sm-3">
                                 <h4 class="mb-2">Find New Restaurants</h4>
-                                <!-- Display the step image from the static directory -->
-                                <img class="tutorial-img mx-auto mb-2" src="{{ url_for('static', filename='images/find_restaurants.png') }}" alt="My Restaurants">
-                                <!-- Display the step text -->
+                                <img
+                                    class="tutorial-img mx-auto mb-2"
+                                    src="{{ url_for('static', filename='images/find_restaurants.png') }}"
+                                    alt="My Restaurants"
+                                />
                                 <p class="mb-3">
-                                    Don't know what to eat?
-                                    Generate a list of recommended restaurants based
-                                    on where you are and what you love.
-                                    We hope that you have an amazing experience
-                                    with your Culinary Compass!
+                                    Don't know what to eat? Generate a list of
+                                    recommended restaurants based on where you
+                                    are and what you love. We hope that you have
+                                    an amazing experience with your Culinary
+                                    Compass!
                                 </p>
                             </div>
-                            <!-- End of the third tutorial step column -->
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End of the main container -->
         </main>
-        <!-- End of the main content section -->
-
-        <!-- Start of the optional JavaScript section -->
         <!-- Include jQuery from a CDN -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"
+        ></script>
         <!-- Include Popper.js from a CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"
+        ></script>
         <!-- Include Bootstrap JS from a CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <!-- End of the body section -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"
+        ></script>
     </body>
-<!-- End of the HTML document -->
 </html>

@@ -1,70 +1,56 @@
 /* Import font from google fonts */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100;0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;0,9..40,1000;1,9..40,100;1,9..40,200;1,9..40,300;1,9..40,400;1,9..40,500;1,9..40,600;1,9..40,700;1,9..40,800;1,9..40,900;1,9..40,1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100;0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;0,9..40,1000;1,9..40,100;1,9..40,200;1,9..40,300;1,9..40,400;1,9..40,500;1,9..40,600;1,9..40,700;1,9..40,800;1,9..40,900;1,9..40,1000&display=swap");
 
 /* General styles */
 body {
     background: #fafafa;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
     color: #333333;
 }
-
-/* Set font size and weight for h1 */
 h1 {
     font-size: 3rem;
     font-weight: 500;
 }
-
-/* Set font size and weight for h2 */
 h2 {
     font-size: 2.5rem;
     font-weight: 500;
 }
-
-/* Reset padding and margin and set text colour */
-h1, h2, h3, h4, h5, h6, p{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
     padding: 0;
     margin: 0;
     color: #444444;
 }
 
-/* Reset ul margin */
 ul {
     margin: 0;
 }
-
-/* Set margin-top for non-home pages */
 #other {
     margin-top: 5rem;
 }
-
-/* Custom class for aligning items to center of div */
 .align-middle {
     display: flex;
     align-items: center;
 }
 
 /* Navigation bar styles */
-/* Set background color for navbar */
 .bg-steel {
     background-color: #e85d04;
 }
-
-/* Set font colour for navbar */
 .site-header .navbar-nav .nav-link {
     color: #ffffff;
 }
-
-/* Set font colour for navbar links on hover */
 .site-header .navbar-nav .nav-link:hover {
     color: #cbd5db;
 }
-
-/* Set font weight for navbar */
 .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
 }
-
-/* Set background color, padding, border, and margin for content-sections */
 .content-section {
     background: #ffffff;
     padding: 10px 20px;
@@ -74,72 +60,50 @@ ul {
 }
 
 /* Image styles */
-/* Set dimensions and margin for profile image */
 .account-img {
     height: 125px;
     width: 125px;
     margin-right: 20px;
     margin-bottom: 16px;
-    object-fit:cover;
+    object-fit: cover;
 }
-
-/* Set dimensions and margin for navbar account image */
 .nav-account-image {
     height: 30px;
     width: 30px;
     margin-left: 5px;
-    object-fit:cover;
+    object-fit: cover;
 }
-
-/* Set dimensions for home page logo */
 .logo-img {
     height: 40vh;
     max-width: 40vw;
-    object-fit: cover;
+    object-fit: scale-down;
 }
-
-/* Set dimensions and border radius for home page tutorial images */
 .tutorial-img {
     max-width: 100%;
     border-radius: 10px;
 }
 
 /* Account page */
-/* Set font color and size for account page title */
 .account-heading {
     color: #444444;
     font-size: 2.5rem;
 }
 
 /* Home Page */
-/* Reset container fluid padding */
 .container-fluid {
     padding: 0;
 }
-
-/* Set container section padding */
-.container-section {
-    padding: 25px 100px 25px 100px;
-}
-
-/* Set font size for home page header */
 .header-home {
     font-size: 10vw;
 }
-
-/* Set background color, text colour, and height of landing section */
 #landing {
-    background-color: #FAA307;
+    background-color: #faa307;
     color: #444444;
     min-height: 100vh;
 }
-
-/* Set background color of about section */
 #about {
-    background-color: #F48C06;
+    background-color: #f48c06;
 }
-
-/* Set background color of tutorial section */
 #tutorial {
-    background-color: #FAA307;
+    background-color: #faa307;
 }

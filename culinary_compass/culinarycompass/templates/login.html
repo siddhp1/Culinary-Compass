@@ -1,89 +1,50 @@
-<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
-{% extends "layout.html" %}
-<!-- Elements unique to the account page will be placed inside the content block -->
-{% block content %}
-    <!-- Start of the content section -->
-    <div class="content-section">
-        <!-- The form for logging in, method is POST -->
-        <form method="POST" action="">
-            <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
-            {{ form.hidden_tag() }}
-            <!-- A fieldset for grouping related elements in the form -->
-            <fieldset class="form-group">
-                <!-- The title for the login form -->
-                <legend class="border-bottom mb-4">Log In</legend>
-                <!-- Start of the email field group -->
-                <div class="form-group">
-                    <!-- The label for the email field -->
-                    {{ form.email.label(class="form-control-label") }}
-                    <!-- If there are errors for the email field, display them -->
-                    {% if form.email.errors %}
-                        <!-- The email input field with error styling -->
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
-                        <!-- Start of the error messages display -->
-                        <div class="invalid-feedback">
-                            <!-- Loop through each error message and display it -->
-                            {% for error in form.email.errors %}
-                                <!-- Display the error message -->
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>  
-                    {% else %}
-                        <!-- If there are no errors, display the email field normally -->
-                        {{ form.email(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <!-- End of the email field group -->
-                
-                <!-- Start of the password field group -->
-                <div class="form-group">
-                    <!-- The label for the password field -->
-                    {{ form.password.label(class="form-control-label") }}
-                    <!-- If there are errors for the password field, display them -->
-                    {% if form.password.errors %}
-                        <!-- The password input field with error styling -->
-                        {{ form.password(class="form-control form-control-lg is-invalid") }}
-                        <!-- A container for the error messages -->
-                        <div class="invalid-feedback">
-                            <!-- Loop through each error message and display it -->
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    <!-- If there are no errors, display the password field normally -->
-                    {% else %}
-                        {{ form.password(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <!-- End of the password field group -->
-
-                <!-- A checkbox for remembering the user's login -->
-                <div class="form-check">
-                    <!-- The remember me checkbox -->
-                    {{ form.remember(class="form-check-input") }}
-                    <!-- The label for the remember me checkbox -->
-                    {{ form.remember.label(class="form-check-label") }}
-                </div>
-            </fieldset>
-            <!-- Start of the submit button group -->
+{% extends "layout.html" %} {% block content %}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Log In</legend>
             <div class="form-group">
-                <!-- The submit button for the form -->
-                {{ form.submit(class="btn btn-outline-info") }}
-                <!-- A link for resetting the password -->
-                <small class="text-muted ml-2">
-                    <!-- Link to the password reset request page -->
-                    <a href="{{ url_for('reset_request') }}">Forgot Password?</a>
-                </small>
+                {{ form.email.label(class="form-control-label") }} {% if
+                form.email.errors %} {{ form.email(class="form-control
+                form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ form.email(class="form-control form-control-lg")
+                }} {% endif %}
             </div>
-            <!-- End of the submit button group -->
-        </form>
-    </div>
-    <!-- A section for the sign up link -->
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            <!-- Link to direct user to sign up page -->
-            Don't Have An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
-        </small>
-    </div>
-<!-- Ends the content block -->
+            <div class="form-group">
+                {{ form.password.label(class="form-control-label") }} {% if
+                form.password.errors %} {{ form.password(class="form-control
+                form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ form.password(class="form-control
+                form-control-lg") }} {% endif %}
+            </div>
+            <div class="form-check">
+                {{ form.remember(class="form-check-input") }} {{
+                form.remember.label(class="form-check-label") }}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+            <small class="text-muted ml-2">
+                <a href="{{ url_for('reset_request') }}">Forgot Password?</a>
+            </small>
+        </div>
+    </form>
+</div>
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Don't Have An Account?
+        <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
+    </small>
+</div>
 {% endblock content %}

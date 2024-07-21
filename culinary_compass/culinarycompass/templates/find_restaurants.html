@@ -1,253 +1,213 @@
-<!-- Extending the layout template to get the head, navbar, and bootstrap classes -->
-{% extends "layout.html" %}
-<!-- Elements unique to the account page will be placed inside the content block -->
-{% block content %}
-<!-- Start of the main div -->
-<div class="text-center">
-    <!-- Display the main title -->
-    <h1 class="mb-3">Find Restaurants</h1>
-    <!-- Display the subtitle -->
-    <h4 class="mb-1">Generate some recommendations based on the restaurants you like.</h4>
-    <!-- Display the instruction -->
-    <h5 class="mb-1">Start by choosing a location where you want to eat.</h5>
-    <!-- Container for the map -->
-    <div class="mb-2" id="map" style="height: 400px;"></div>
+{% extends "layout.html" %} {% block content %}
+<div class="text-center mb-5 mb-md-3">
+    <h1 class="mb-2">Find Restaurants</h1>
+    <h5 class="mb-2">
+        Generate recommendations based on what you like.<span
+            class="d-none d-md-inline"
+            ><br
+        /></span>
+        Start by choosing a location where you want to eat.
+    </h5>
+    <div class="mb-2" id="map" style="height: 400px"></div>
 
-    <!-- Start of the form to submit the location -->
     <form method="POST" action="">
-        <!-- Start of the container for the form -->
         <div class="container">
-            <!-- Start of the row for the form -->
             <div class="row justify-content-center">
-                <!-- Start of the column for the location field -->
                 <div class="col-md-6">
-                    <!-- Hidden tag for generating a CSRF token (for forgery prevention) -->
                     {{ form.hidden_tag() }}
 
-                    <!-- Start of the radius field form control -->
                     <div id="radius-field" class="form-group">
-                        <!-- Render the label for the radius field -->
-                        {{ form.radius.label(class="form-label") }}
-                        <!-- Render the radius field -->
-                        {{ form.radius(class="form-control") }}
-                        <!-- Div that gets automatically scolled to when the recommendations load -->
+                        {{ form.radius.label(class="form-label") }} {{
+                        form.radius(class="form-control") }}
                         <div class="mb-6" id="scroll-point"></div>
                     </div>
-                    <!-- End of the radius field form control -->
 
-                    <!-- Start of the submit button form control -->
                     <div id="generate-button" class="form-group">
-                        <!-- Render the submit button -->
                         {{ form.submit(class="btn btn-info btn-block") }}
                     </div>
-                    <!-- End of the submit button form control -->
                 </div>
             </div>
         </div>
     </form>
-    <!-- End of the form to submit the location -->
-
-    <!-- Check if there are any recommendations -->
     {% if recommendations %}
-        <!-- Display the title for the recommendations -->
-        <h2>Here are some restaurants that you may like:</h2>
-        <!-- Loop through each recommendation -->
-        {% for recommendation in recommendations %}
-            <!-- Start of the card for the recommendation -->
-            <div class="card mt-3">
-                <!-- Display the index of the recommendation -->
-                <div style="position: absolute; top: 0; left: 0; padding: 10px; font-size: 20px;">
-                    {{ loop.index }}
+    <h2>Here are some restaurants that you may like:</h2>
+    {% for recommendation in recommendations %}
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if recommendation.website %}
+                    <h2 class="card-title">
+                        <a
+                            class="text-info"
+                            href="{{ recommendation.website }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >{{ recommendation.name }}</a
+                        >
+                    </h2>
+                    {% else %}
+                    <h2 class="card-title">{{ recommendation.name }}</h2>
+                    {% endif %}
+
+                    <p>
+                        <strong>Categories: </strong>
+                        {% for category in recommendation.category.split(',') %}
+                        {{ category.split(':')[0] }}{% if not loop.last %}, {%
+                        endif %} {% endfor %}
+                    </p>
                 </div>
-                <!-- Start of the card body -->
-                <div class="card-body">
-                    <!-- Start of the row for the recommendation details -->
-                    <div class="row">
-                        <!-- Start of the column for the restaurant details -->
-                        <div class="col-md-6">
-                            <!-- Check if the recommendation has a website -->
-                            {% if recommendation.website %}
-                                <!-- If it has a website, display the restaurant name as a link to the website -->
-                                <h2 class="card-title"><a class="text-info" href="{{ recommendation.website }}">{{ recommendation.name }}</a></h2>
-                            {% else %}
-                                <!-- If it doesn't have a website, display the restaurant name normally -->
-                                <h2 class="card-title">{{ recommendation.name }}</h2>
-                            {% endif %}
 
-                            <!-- Start of the categories list -->
-                            <p><strong>Categories: </strong>
-                                <!-- Loop through each category in the categories list -->
-                                {% for category in recommendation.category.split(',') %}
-                                    <!-- Display the category -->
-                                    {{ category.split(':')[0] }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </p>
-                            <!-- End of the categories list -->
-                        </div>
-                        <!-- End of the column for the restaurant details -->
-
-                        <!-- Start of the column for the address and directions -->
-                        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center">
-                            <!-- Display the address of the restaurant -->
-                            <p class="mb-1">{{ recommendation.address }}</p>
-                            <!-- Display a button to get directions to the restaurant -->
-                            <a href="" class="btn btn-outline-info" onclick="openGoogleMapsDirections(this)" data-address="{{ recommendation.name + ' ' + recommendation.address }}">Get Directions</a>
-                        </div>
-                        <!-- End of the column for the address and directions -->
-                    </div>
+                <div
+                    class="col-md-6 d-flex flex-column justify-content-center align-items-center"
+                >
+                    <p class="mb-1">{{ recommendation.address }}</p>
+                    <a
+                        href=""
+                        class="btn btn-outline-info"
+                        onclick="openGoogleMapsDirections(this)"
+                        data-address="{{ recommendation.name + ' ' + recommendation.address }}"
+                        >Get Directions</a
+                    >
                 </div>
             </div>
-        {% endfor %}
-    {% endif %}
+        </div>
+    </div>
+    {% endfor %} {% endif %}
 </div>
-<!-- End of the main div -->
-
 <script>
-    // Function to open Google Maps Directions in a new tab
+    // Function to open Google maps directions to restaurant
     function openGoogleMapsDirections(button) {
-        // Prevent the default behavior of the anchor tag
         event.preventDefault();
-        // Get the address from the data attribute of the button
-        var address = button.getAttribute('data-address');
-        // Encode the address for the Google Maps URL
+        var address = button.getAttribute("data-address");
         var encodedAddress = encodeURIComponent(address);
 
-        // Use the Geolocation API to get the user's current position
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                // Get the latitude and longitude from the position
+            navigator.geolocation.getCurrentPosition(function (position) {
                 var lat = position.coords.latitude;
                 var lon = position.coords.longitude;
 
-                // Construct the Google Maps Directions URL with the user's current position as the origin
-                var mapsUrl = 'https://www.google.com/maps/dir/?api=1&origin=' + lat + ',' + lon + '&destination=' + encodedAddress;
+                var mapsUrl =
+                    "https://www.google.com/maps/dir/?api=1&origin=" +
+                    lat +
+                    "," +
+                    lon +
+                    "&destination=" +
+                    encodedAddress;
 
-                // Open the URL in a new tab
-                window.open(mapsUrl, '_blank');
+                window.open(mapsUrl, "_blank");
             });
         } else {
-            // Geolocation is not supported by this browser, just use the destination
-            var mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodedAddress;
-            window.open(mapsUrl, '_blank');
+            var mapsUrl =
+                "https://www.google.com/maps/dir/?api=1&destination=" +
+                encodedAddress;
+            window.open(mapsUrl, "_blank");
         }
     }
-    
+
     // Function to initialize the map with a marker
     function initMap() {
-        // If the session variable for the coordinates exists (if the user has already chosen a location)
-        if (sessionStorage.getItem('coordinates')) {
+        if (sessionStorage.getItem("coordinates")) {
+            var coordinates = sessionStorage.getItem("coordinates").split(",");
 
-            // Get the coordinates from the session variable
-            var coordinates = sessionStorage.getItem('coordinates').split(',');
-
-            // Create a location object from the coordinates
             var location = {
                 lat: parseFloat(coordinates[0]),
-                lng: parseFloat(coordinates[1])
+                lng: parseFloat(coordinates[1]),
             };
 
-            // Initialize the map with the location
             initializeMap(location);
-            
-        } 
-        // Check if geolocation is supported
-        else if (navigator.geolocation) {
-            // Try to get the user's current position
+        } else if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // If successful, use the user's location as the initial position
+                function (position) {
                     var userLocation = {
                         lat: position.coords.latitude,
-                        lng: position.coords.longitude
+                        lng: position.coords.longitude,
                     };
                     initializeMap(userLocation);
                 },
-                function(error) {
-                    // If unsuccessful, use a default location as the initial position
-                    var defaultLocation = { lat: 43.6834, lng: -79.7660 }; // Brampton, Ontario, Canada
+                function (error) {
+                    var defaultLocation = { lat: 43.6834, lng: -79.766 }; // Brampton, Ontario, Canada
                     initializeMap(defaultLocation);
                 }
             );
-        } 
-        else {
-            // If geolocation is not supported, use a default location as the initial position
-            var defaultLocation = { lat: 43.6834, lng: -79.7660 }; // Brampton, Ontario, Canada
+        } else {
+            var defaultLocation = { lat: 43.6834, lng: -79.766 }; // Brampton, Ontario, Canada
             initializeMap(defaultLocation);
         }
     }
-    
+
     // Function to initialize the map at a given position
     function initializeMap(initialPosition) {
-        // Create a new map centered at the initial position
-        var map = new google.maps.Map(document.getElementById('map'), {
+        var map = new google.maps.Map(document.getElementById("map"), {
             center: initialPosition,
-            zoom: 12
+            zoom: 12,
         });
-    
-        // Create a new marker at the initial position
+
         var marker = new google.maps.Marker({
             position: initialPosition,
             map: map,
-            draggable: true
+            draggable: true,
         });
-    
-        // Add a listener for the 'idle' event to update the coordinates once when the marker is initialized
-        google.maps.event.addListenerOnce(map, 'idle', function() {
-            updateCoordinates(marker.getPosition().lat(), marker.getPosition().lng());
+
+        google.maps.event.addListenerOnce(map, "idle", function () {
+            updateCoordinates(
+                marker.getPosition().lat(),
+                marker.getPosition().lng()
+            );
         });
-    
-        // Add a listener for the 'dragend' event to update the coordinates when the marker is dragged
-        google.maps.event.addListener(marker, 'dragend', function(event) {
+
+        google.maps.event.addListener(marker, "dragend", function (event) {
             updateCoordinates(event.latLng.lat(), event.latLng.lng());
         });
     }
-    
-    // Function to update the coordinates and send them to the server
-    function updateCoordinates(lat, lng) {    
-        // Create a new XMLHttpRequest to send the coordinates to the server
-        var xhr = new XMLHttpRequest();
-        // Send to the '/update_coordinates' route
-        var url = '/update_coordinates';
-        // Sedn the coordinates as parameters
-        var params = 'lat=' + lat + '&lng=' + lng;
 
-        // Set the request to be asynchronous
-        xhr.open('POST', url, true);
-        // Set the content type header for the POST request
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        // Send the request
+    // Function to update the coordinates and send them to the server
+    function updateCoordinates(lat, lng) {
+        var xhr = new XMLHttpRequest();
+        var url = "/update_coordinates";
+        var params = "lat=" + lat + "&lng=" + lng;
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader(
+            "Content-type",
+            "application/x-www-form-urlencoded"
+        );
         xhr.send(params);
 
-        // Set session variable for the coordinates
-        sessionStorage.setItem('coordinates', lat + ',' + lng);
+        sessionStorage.setItem("coordinates", lat + "," + lng);
     }
-    
+
     // Function to load the Google Maps API script
     function loadMapScript() {
-        // Create a new script element
-        var script = document.createElement('script');
-        // Set the source of the script to the Google Maps API URL
-        script.src = 'https://maps.googleapis.com/maps/api/js?key={{ key }}&callback=initMap';
-        // Set the script to defer and async
+        var script = document.createElement("script");
+        script.src =
+            "https://maps.googleapis.com/maps/api/js?key={{ key }}&callback=initMap";
         script.defer = true;
         script.async = true;
-        // Append the script to the head of the document
         document.head.appendChild(script);
     }
-    
+
     // Add an event listener for the 'DOMContentLoaded' event to load the map script when the page is fully loaded
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
         loadMapScript();
+
+        var directionButtons = document.querySelectorAll(".btn-outline-info");
+
+        directionButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                openGoogleMapsDirections(this);
+            });
+            button.addEventListener("touchstart", function () {
+                openGoogleMapsDirections(this);
+            });
+        });
     });
-    
+
     // Add an event listener for the 'DOMContentLoaded' event to auto scroll to the recommendations when the page is fully loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        // Scroll down to the recommendation button
-        var recommendations = document.getElementById('scroll-point');
-        // If the button exists
+    document.addEventListener("DOMContentLoaded", function () {
+        var recommendations = document.getElementById("scroll-point");
         if (recommendations) {
-            // Scroll to the button
-            recommendations.scrollIntoView({ behavior: 'smooth' });
+            recommendations.scrollIntoView({ behavior: "smooth" });
         }
     });
 </script>

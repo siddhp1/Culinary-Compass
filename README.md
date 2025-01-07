@@ -22,7 +22,7 @@ Culinary Compass is deployed on an Ubuntu virtual machine hosted on Azure, using
 
 ## Usage
 
-Visit the website at [Culinary Compass](http://www.culinarycompass.live) and follow the tutorial at the bottom of the home page.
+Visit the website at [Culinary Compass](http://www.culinarycompass.siddhp.com) and follow the tutorial at the bottom of the home page.
 
 ## License
 
